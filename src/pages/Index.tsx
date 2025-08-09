@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { AuthMenu } from "@/components/auth/AuthMenu";
+import GoalForm from "@/components/goals/GoalForm";
+import GoalsList from "@/components/goals/GoalsList";
 
 const PANEL_SIZE = { w: typeof window !== 'undefined' ? window.innerWidth : 375, h: typeof window !== 'undefined' ? window.innerHeight : 667 };
 
@@ -121,24 +124,12 @@ function ControlPanel() {
     <section className="w-full h-full flex flex-col">
       <PanelHeader title="Control" subtitle="Manage goals with clarity" />
       <main className="flex-1 p-6 max-w-xl mx-auto w-full">
-        <form className="glass-panel rounded-xl p-5 elev grid gap-3">
-          <div className="grid gap-2">
-            <label htmlFor="title" className="text-sm">Goal Title</label>
-            <input id="title" className="glass-panel rounded-md px-3 py-2 outline-none" placeholder="e.g., Deep Focus Sprint" />
+        <div className="glass-panel rounded-xl p-5 elev grid gap-6">
+          <GoalForm />
+          <div className="pt-2 border-t border-border">
+            <GoalsList />
           </div>
-          <div className="grid gap-2">
-            <label htmlFor="why" className="text-sm">Why</label>
-            <textarea id="why" className="glass-panel rounded-md px-3 py-2 outline-none" placeholder="Motivation in one sentence" />
-          </div>
-          <div className="grid gap-2">
-            <label htmlFor="next" className="text-sm">Next Action</label>
-            <input id="next" className="glass-panel rounded-md px-3 py-2 outline-none" placeholder="Smallest next step" />
-          </div>
-          <div className="flex gap-3">
-            <Button type="button" onClick={()=> toast({ title: "Saved locally", description: "Connect Supabase to sync across devices." })}>Save</Button>
-            <Button type="button" variant="secondary" onClick={()=> toast({ title: "Link", description: "Link goals to moments when Supabase is connected." })}>Link Moments</Button>
-          </div>
-        </form>
+        </div>
       </main>
     </section>
   );
@@ -197,8 +188,9 @@ const Index = () => {
         <h1 className="sr-only">Mind Operating System (MOS)</h1>
       </header>
 
-      <nav className="absolute top-4 right-4 z-10">
+      <nav className="absolute top-4 right-4 z-10 flex items-center gap-2">
         <Button variant="secondary" onClick={()=> toast({ title: "Connect Supabase", description: "Click the green Supabase button (top-right in Lovable) to enable Auth, DB & Storage." })}>Connect Supabase</Button>
+        <AuthMenu />
       </nav>
 
       <div className="absolute inset-0 smooth" style={{ transform: translate }}>
