@@ -20,7 +20,7 @@ export function ProgressBar({ percent }: { percent: number }) {
   }, [clamped]);
 
   return (
-    <div className="glass-panel rounded-xl p-4 elev relative">
+    <div className="glass-panel rounded-xl p-4 elev relative animate-fade-in smooth">
       <div className="flex items-center justify-between">
         <div className="text-sm font-medium">Today's Progress</div>
         <div className="text-xs text-muted-foreground" aria-live="polite">{clamped}%</div>

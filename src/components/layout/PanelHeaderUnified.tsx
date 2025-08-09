@@ -10,7 +10,7 @@ export function PanelHeaderUnified({
   actions?: ReactNode;
 }) {
   return (
-    <header className="px-6 pt-24 sm:pt-24">
+    <header className="px-6 pt-24 sm:pt-24 animate-fade-in smooth">
       <div className="glass-panel rounded-xl p-5 elev flex items-center justify-between gap-3">
         <div>
           <h2 className="text-xl font-semibold">{title}</h2>

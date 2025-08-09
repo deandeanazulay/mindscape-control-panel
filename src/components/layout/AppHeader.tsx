@@ -11,7 +11,7 @@ export default function AppHeader() {
   return (
     <header className="fixed top-0 inset-x-0 z-30">
       <div className="px-4 sm:px-6">
-        <div className="mt-3 glass-panel rounded-full px-3 py-2 elev flex items-center justify-between gap-3">
+        <div className="mt-3 glass-panel rounded-full px-3 py-2 elev flex items-center justify-between gap-3 animate-fade-in smooth">
           {/* Brand */}
           <div className="flex items-center gap-2">
             <button
