@@ -1,6 +1,6 @@
 import LessonPath from "./LessonPath";
-import HudBar from "./HudBar";
-import BottomGameNav from "./BottomGameNav";
+
+
 
 export default function GameHome({
   onNodeClick,
@@ -11,9 +11,9 @@ export default function GameHome({
 }) {
   return (
     <div className="min-h-screen bg-[hsl(var(--path-bg))] text-white relative overflow-hidden">
-      <HudBar />
+      
       <LessonPath onNodeClick={onNodeClick} />
-      <BottomGameNav onSelect={onNavSelect} />
+      
     </div>
   );
 }

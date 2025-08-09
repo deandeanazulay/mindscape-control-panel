@@ -12,6 +12,7 @@ import DailyKickoff from "@/components/live/DailyKickoff";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import LandingPage from "./LandingPage";
 import { type PathNode } from "@/game/path/path.data";
+import HUDBar from "@/game/hud/HUDBar";
 type PanelKey = "live" | "archive" | "control" | "create" | "analyze";
 
 const panelMap: Record<PanelKey, { grid: [number, number]; title: string; subtitle: string } > = {
@@ -427,6 +428,9 @@ if (!initializing && !user) {
 
       {/* Global AI assistant */}
       <FloatingAssistant task={null} onUpdated={() => {}} />
+
+      {/* Unified HUD */}
+      <HUDBar />
     </div>
   );
 };
