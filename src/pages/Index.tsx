@@ -180,13 +180,13 @@ function OverlayArrows({
   const stop = (e: React.PointerEvent) => e.stopPropagation();
 
   return (
-    <div className="fixed inset-0 z-20 pointer-events-none">
+    <div className="fixed inset-0 z-40 pointer-events-none">
       {canUp && (
         <Button
           size="icon"
           variant="secondary"
           aria-label="Move up"
-          className={`${btnClass} fixed top-4 left-1/2 -translate-x-1/2`}
+          className={`${btnClass} fixed top-20 left-1/2 -translate-x-1/2`}
           onPointerDown={stop}
           onPointerUp={stop}
           onClick={moveUp}
@@ -199,7 +199,7 @@ function OverlayArrows({
           size="icon"
           variant="secondary"
           aria-label="Move down"
-          className={`${btnClass} fixed bottom-4 left-1/2 -translate-x-1/2`}
+          className={`${btnClass} fixed bottom-24 left-1/2 -translate-x-1/2`}
           onPointerDown={stop}
           onPointerUp={stop}
           onClick={moveDown}
@@ -233,6 +233,71 @@ function OverlayArrows({
           <ChevronRight className="w-4 h-4" />
         </Button>
       )}
+    </div>
+  );
+}
+
+function CompassIndicator({
+  pos,
+  moveLeft,
+  moveRight,
+  moveUp,
+  moveDown,
+}: {
+  pos: [number, number];
+  moveLeft: () => void;
+  moveRight: () => void;
+  moveUp: () => void;
+  moveDown: () => void;
+}) {
+  const canLeft = nextOccupied(pos[0], pos[1], "left") !== null;
+  const canRight = nextOccupied(pos[0], pos[1], "right") !== null;
+  const canUp = nextOccupied(pos[0], pos[1], "up") !== null;
+  const canDown = nextOccupied(pos[0], pos[1], "down") !== null;
+
+  const Dot = ({ className = "", ariaLabel, onClick }: { className?: string; ariaLabel?: string; onClick?: () => void }) => (
+    <button
+      type="button"
+      aria-label={ariaLabel}
+      title={ariaLabel}
+      onClick={onClick}
+      className={`w-11 h-11 rounded-full border border-border smooth focus:outline-none focus:ring-2 focus:ring-primary/50 ${className}`}
+    />
+  );
+
+  return (
+    <div className="fixed left-1/2 -translate-x-1/2 bottom-16 z-40">
+      <div className="grid grid-cols-3 grid-rows-3 gap-2 p-2 glass-panel rounded-2xl elev">
+        {/* row 1 */}
+        <div />
+        {canUp ? (
+          <Dot ariaLabel="Go up" onClick={moveUp} className="bg-accent hover-scale" />
+        ) : (
+          <div className="w-11 h-11" aria-hidden />
+        )}
+        <div />
+        {/* row 2 */}
+        {canLeft ? (
+          <Dot ariaLabel="Go left" onClick={moveLeft} className="bg-accent hover-scale" />
+        ) : (
+          <div className="w-11 h-11" aria-hidden />
+        )}
+        {/* center */}
+        <div className="w-11 h-11 rounded-full bg-primary border border-primary/60" aria-hidden />
+        {canRight ? (
+          <Dot ariaLabel="Go right" onClick={moveRight} className="bg-accent hover-scale" />
+        ) : (
+          <div className="w-11 h-11" aria-hidden />
+        )}
+        {/* row 3 */}
+        <div />
+        {canDown ? (
+          <Dot ariaLabel="Go down" onClick={moveDown} className="bg-accent hover-scale" />
+        ) : (
+          <div className="w-11 h-11" aria-hidden />
+        )}
+        <div />
+      </div>
     </div>
   );
 }
@@ -281,21 +346,14 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Indicators */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-6 z-10">
-        {/* horizontal dots */}
-        <div className="flex items-center gap-2">
-          {[0,1,2].map((i)=> (
-            <span key={i} className={`block rounded-full smooth ${i===pos[0] ? 'bg-primary' : 'bg-muted'} ${i===pos[0] ? 'w-4 h-2' : 'w-2 h-2'}`} />
-          ))}
-        </div>
-        {/* vertical dots */}
-        <div className="flex items-center gap-2">
-          {[0,1,2].map((i)=> (
-            <span key={i} className={`block rounded-full smooth ${i===pos[1] ? 'bg-accent' : 'bg-muted'} ${i===pos[1] ? 'w-2 h-4' : 'w-2 h-2'}`} />
-          ))}
-        </div>
-      </div>
+      {/* Compass indicator */}
+      <CompassIndicator
+        pos={pos}
+        moveLeft={moveLeft}
+        moveRight={moveRight}
+        moveUp={moveUp}
+        moveDown={moveDown}
+      />
 
       {/* Floating edge arrows */}
       <OverlayArrows
