@@ -212,7 +212,7 @@ export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?:
         }
       />
 
-      <main className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-4 p-6">
+      <main className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-4 p-6 max-w-3xl mx-auto w-full">
         {!user && !initializing && (
           <div className="glass-panel rounded-xl p-6 text-center">
             <div className="text-sm text-muted-foreground">

@@ -4,10 +4,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
-import { supabase } from "@/integrations/supabase/client";
-import { SoundControl } from "@/components/sounds/SoundControl";
 
+import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useRef, useState } from "react";
 
 type Task = {
@@ -22,11 +20,7 @@ type Track = {
   description: string | null;
 };
 
-export function QuickActionsBar({ currentTask }: { currentTask: Task | null }) {
-  
-  const { user } = useSupabaseAuth();
-
-  // Hypnosis tracks (publicly readable)
+  export function QuickActionsBar({ currentTask }: { currentTask: Task | null }) {
   const [tracks, setTracks] = useState<Track[]>([]);
   const [tracksLoading, setTracksLoading] = useState(false);
   useEffect(() => {
@@ -52,13 +46,13 @@ export function QuickActionsBar({ currentTask }: { currentTask: Task | null }) {
   const [noteOpen, setNoteOpen] = useState(false);
   const [noteText, setNoteText] = useState("");
   const saveNote = async () => {
-    if (!user) {
+    if (!(await supabase.auth.getUser()).data.user) {
       toast({ title: "Sign in required", description: "Connect Supabase to capture notes." });
       return;
     }
     if (!noteText.trim()) return;
     const { error } = await supabase.from("moments").insert({
-      user_id: user.id,
+      user_id: (await supabase.auth.getUser()).data.user!.id,
       type: "text",
       content: noteText.trim(),
       folder: "Memories",
@@ -83,7 +77,8 @@ export function QuickActionsBar({ currentTask }: { currentTask: Task | null }) {
   const timerRef = useRef<number | null>(null);
 
   const startRecording = async () => {
-    if (!user) {
+    const authUser = (await supabase.auth.getUser()).data.user;
+    if (!authUser) {
       toast({ title: "Sign in required", description: "Connect Supabase to record voice notes." });
       return;
     }
@@ -98,11 +93,11 @@ export function QuickActionsBar({ currentTask }: { currentTask: Task | null }) {
         if (timerRef.current) { window.clearInterval(timerRef.current); timerRef.current = null; }
         try {
           const blob = new Blob(chunks, { type: "audio/webm" });
-          const filePath = `${user!.id}/${Date.now()}.webm`;
+          const filePath = `${authUser!.id}/${Date.now()}.webm`;
           const { error: upErr } = await supabase.storage.from("voice-notes").upload(filePath, blob, { contentType: "audio/webm" });
           if (upErr) throw upErr;
           const { error: insErr } = await supabase.from("moments").insert({
-            user_id: user!.id,
+            user_id: authUser!.id,
             type: "audio",
             content: "Voice note",
             storage_path: `voice-notes/${filePath}`,
@@ -142,9 +137,6 @@ export function QuickActionsBar({ currentTask }: { currentTask: Task | null }) {
 
   return (
     <div className="glass-panel rounded-xl p-3 elev flex flex-wrap items-center gap-2 sm:gap-3">
-      {/* Play Sound */}
-      <SoundControl label="Play Sound" buttonVariant="secondary" buttonSize="sm" />
-
       {/* Hypnosis quick-play */}
       <Dialog>
         <DialogTrigger asChild>

@@ -3,7 +3,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-
+import { PanelHeaderUnified } from "@/components/layout/PanelHeaderUnified";
 // Basic types for archive entities
 type Moment = {
   id: string;
@@ -103,14 +103,9 @@ export default function ArchivePanel() {
 
   return (
     <section className="w-full h-full flex flex-col">
-      <header className="px-6 pt-8">
-        <div className="glass-panel rounded-xl p-5 elev">
-          <h2 className="text-xl font-semibold">Archive</h2>
-          <p className="text-sm text-muted-foreground mt-1">Your organized memories and references</p>
-        </div>
-      </header>
+      <PanelHeaderUnified title="Archive" subtitle="Your organized memories and references" />
 
-      <main className="flex-1 min-h-0 overflow-hidden p-6">
+      <main className="flex-1 min-h-0 overflow-y-auto p-6 max-w-3xl mx-auto w-full">
         <div className="glass-panel rounded-xl p-4 elev h-full flex flex-col">
           <Tabs defaultValue="moments" className="flex-1 flex flex-col">
             <TabsList className="self-start">

@@ -133,7 +133,7 @@ function CreatePanel() {
   return (
     <section className="w-full h-full flex flex-col">
       <PanelHeaderUnified title="Create" subtitle="Guided prompts coming in Sprint 2" />
-      <main className="flex-1 min-h-0 overflow-y-auto p-6 grid place-items-center">
+      <main className="flex-1 min-h-0 overflow-y-auto p-6 max-w-3xl mx-auto w-full grid place-items-center">
         <div className="glass-panel rounded-xl p-6 text-center max-w-md">
           <p className="text-sm text-muted-foreground">Prompt packs will help you capture ideas and convert them to goals or archive cards.</p>
         </div>
@@ -146,13 +146,13 @@ function AnalyzePanel() {
   return (
     <section className="w-full h-full flex flex-col">
       <PanelHeaderUnified title="Analyze" subtitle="Decision tools coming in Sprint 2" />
-      <main className="flex-1 min-h-0 overflow-y-auto p-6 grid grid-cols-2 sm:grid-cols-4 gap-4 content-start">
-        {["If–Then","Pros / Cons","One Constraint","One Metric"].map((tool)=> (
+      <main className="flex-1 min-h-0 overflow-y-auto p-6 max-w-3xl mx-auto w-full grid grid-cols-2 sm:grid-cols-4 gap-4 content-start">
+        { ["If–Then","Pros / Cons","One Constraint","One Metric"].map((tool)=> (
           <button key={tool} onClick={()=> toast({ title: tool, description: "Will save as analysis cards linked to goals." })} className="glass-panel rounded-xl p-4 elev smooth hover:scale-[1.02] text-left">
             <span className="font-semibold">{tool}</span>
             <p className="text-xs text-muted-foreground mt-1">Tap to start</p>
           </button>
-        ))}
+        )) }
       </main>
     </section>
   );
