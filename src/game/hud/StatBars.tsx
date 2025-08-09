@@ -1,4 +1,4 @@
-import { character } from './hud.data'
+import { useGameStore } from '@/game/store'
 
 const Bar = ({label,hue,value}:{label:string; hue:string; value:number}) => (
   <div className="w-full">
@@ -10,11 +10,12 @@ const Bar = ({label,hue,value}:{label:string; hue:string; value:number}) => (
 )
 
 export default function StatBars() {
+  const stats = useGameStore(s => s.stats)
   return (
     <div className="space-y-2 min-w-[260px] w-[min(480px,50vw)]">
-      <Bar label="HP" hue="0 80% 60%" value={character.hp}/>
-      <Bar label="MP" hue="210 90% 65%" value={character.mp}/>
-      <Bar label="XP" hue="200 90% 55%" value={character.xp}/>
+      <Bar label="HP" hue="0 80% 60%" value={stats.hp}/>
+      <Bar label="MP" hue="210 90% 65%" value={stats.mp}/>
+      <Bar label="XP" hue="200 90% 55%" value={stats.xp}/>
     </div>
   )
 }

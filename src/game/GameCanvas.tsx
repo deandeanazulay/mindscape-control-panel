@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { OverlayId } from "@/components/mindworld/WorldOverlayRouter";
+import { useGameStore } from "@/game/store";
 
 type Vec2 = { x: number; y: number };
 
@@ -12,6 +13,7 @@ const portals: { x: number; id: OverlayId; label: string }[] = [
   { x: 1900, id: "library", label: "Idea Forest" },
   { x: 2450, id: "library", label: "Memory Vault" },
   { x: 3000, id: "analyze", label: "Arena" },
+  { x: 3300, id: "analyze", label: "Portal Plaza" },
 ];
 
 export default function GameCanvas({ inputVec, actionTick, overlayId, onEnter }: { inputVec: Vec2; actionTick: number; overlayId: OverlayId | null; onEnter: (id: OverlayId) => void; }) {
@@ -19,8 +21,12 @@ export default function GameCanvas({ inputVec, actionTick, overlayId, onEnter }:
   const [vw, setVw] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1280);
   const [vh, setVh] = useState<number>(typeof window !== 'undefined' ? window.innerHeight : 720);
 
+  // Persisted position
+  const posStore = useGameStore(s => s.pos);
+  const setPos = useGameStore(s => s.setPos);
+
   // Player state
-  const xRef = useRef<number>(120);
+  const xRef = useRef<number>(posStore?.x ?? 120);
   const vRef = useRef<number>(0);
   const [x, setX] = useState<number>(xRef.current);
   const lastAction = useRef<number>(actionTick);
@@ -65,11 +71,22 @@ export default function GameCanvas({ inputVec, actionTick, overlayId, onEnter }:
   useEffect(() => {
     if (actionTick === lastAction.current) return;
     lastAction.current = actionTick;
-    // Enter if close to a portal
     if (nearest && nearest.d < 48) {
-      onEnter(nearest.id);
+      if (nearest.label === 'Portal Plaza') {
+        document.dispatchEvent(new CustomEvent('open-fast-travel'));
+      } else {
+        onEnter(nearest.id);
+      }
     }
   }, [actionTick, nearest, onEnter]);
+
+  // Persist player position periodically
+  useEffect(() => {
+    const id = setInterval(() => {
+      setPos(xRef.current, posStore?.y ?? 820);
+    }, 400);
+    return () => clearInterval(id);
+  }, [setPos, posStore?.y]);
 
   // Camera offset keeps player near middle
   const offsetX = useMemo(() => {

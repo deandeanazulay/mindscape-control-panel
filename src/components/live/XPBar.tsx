@@ -36,6 +36,17 @@ export function XPBar() {
     prevLevel.current = level;
   }, [level]);
 
+  // Sparkle on local XP awards (store-driven)
+  useEffect(() => {
+    const h = () => {
+      setSpark(true);
+      const t = setTimeout(() => setSpark(false), 900);
+      return () => clearTimeout(t);
+    };
+    window.addEventListener('xp-sparkle', h as any);
+    return () => window.removeEventListener('xp-sparkle', h as any);
+  }, []);
+
   if (!user) return null;
 
   return (

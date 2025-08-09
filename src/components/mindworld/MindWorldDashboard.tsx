@@ -8,6 +8,8 @@ import WorldOverlayRouter, { type OverlayId } from "./WorldOverlayRouter";
 import HUDBar from "@/game/hud/HUDBar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useGameStore } from "@/game/store";
+import { REWARDS } from "@/game/QuestEngine";
 
 export default function MindWorldDashboard() {
   const [vec, setVec] = useState({ x: 0, y: 0 });
@@ -18,6 +20,10 @@ export default function MindWorldDashboard() {
 
   const isMobile = useIsMobile();
   const [joyEnabled, setJoyEnabled] = useLocalStorage<boolean>("joystick.enabled", isMobile);
+
+  // Game store actions
+  const awardXP = useGameStore(s => s.awardXP);
+  const completeQuest = useGameStore(s => s.completeQuest);
 
   // Toggle joystick via global event and persist
   useEffect(() => {
@@ -38,7 +44,7 @@ export default function MindWorldDashboard() {
       const k = e.key.toLowerCase();
       if (k === 'arrowleft' || k === 'a') { pressed.add('left'); updateVec(); }
       if (k === 'arrowright' || k === 'd') { pressed.add('right'); updateVec(); }
-      if (k === ' ' || k === 'enter') { setActionTick((t) => t + 1); }
+      if (k === ' ' || k === 'enter' || k === 'e') { setActionTick((t) => t + 1); }
     };
     const up = (e: KeyboardEvent) => {
       const k = e.key.toLowerCase();
@@ -53,15 +59,15 @@ export default function MindWorldDashboard() {
     };
   }, [overlay]);
 
-  // Listen to global HUD quick actions and open overlays accordingly
+  // Listen to global HUD quick actions and open overlays accordingly + quests/XP
   useEffect(() => {
     const set = (id: OverlayId | null) => setOverlay(id);
-    const onFocus = () => set('focus');
-    const onHypno = () => set('mentor');
-    const onVoice = () => set('library');
-    const onNote = () => set('library');
-    const onAnalyze = () => set('analyze');
-    const onMap = () => set(null);
+    const onFocus = () => { set('focus'); completeQuest('pick-focus'); awardXP(REWARDS.completeQuest); };
+    const onHypno = () => { set('mentor'); completeQuest('start-hypno'); awardXP(REWARDS.completeQuest); };
+    const onVoice = () => { set('library'); completeQuest('record-voice'); awardXP(REWARDS.completeQuest); };
+    const onNote = () => { set('library'); completeQuest('add-note'); awardXP(REWARDS.completeQuest); };
+    const onAnalyze = () => { set('analyze'); completeQuest('open-analyze'); awardXP(REWARDS.completeQuest); };
+    const onMap = () => { document.dispatchEvent(new CustomEvent('open-fast-travel')); };
 
     document.addEventListener('mos:startFocus' as any, onFocus as any);
     document.addEventListener('mos:startHypnosis' as any, onHypno as any);
@@ -78,7 +84,7 @@ export default function MindWorldDashboard() {
       document.removeEventListener('mos:openAnalyze' as any, onAnalyze as any);
       document.removeEventListener('mos:openMap' as any, onMap as any);
     };
-  }, []);
+  }, [awardXP, completeQuest]);
 
   return (
     <section className="w-full h-full">

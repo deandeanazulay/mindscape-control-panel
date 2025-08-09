@@ -13,6 +13,9 @@ import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import LandingPage from "./LandingPage";
 import { type PathNode } from "@/game/path/path.data";
 import HUDBar from "@/game/hud/HUDBar";
+import FastTravel from "@/components/overlays/FastTravel";
+import Onboarding from "@/components/overlays/Onboarding";
+import HypnoPanel from "@/components/hypno/HypnoPanel";
 type PanelKey = "live" | "archive" | "control" | "create" | "analyze";
 
 const panelMap: Record<PanelKey, { grid: [number, number]; title: string; subtitle: string } > = {
@@ -389,7 +392,7 @@ useEffect(() => {
   const onVoice = () => go('archive', 'Voice', 'Opening voice notes…');
   const onNote = () => go('create', 'Notes', 'Capture a quick note');
   const onAnalyze = () => go('analyze', 'Analyze', 'Decision tools');
-  const onMap = () => go('control', 'Map', 'Roadmaps and tasks');
+  const onMap = () => { window.dispatchEvent(new CustomEvent('open-fast-travel')); };
 
   document.addEventListener('mos:startFocus' as any, onFocus as any);
   document.addEventListener('mos:startHypnosis' as any, onHypno as any);
@@ -461,6 +464,11 @@ if (!initializing && !user) {
 
       {/* Unified HUD */}
       <HUDBar />
+
+      {/* Overlays */}
+      <FastTravel />
+      <HypnoPanel />
+      <Onboarding />
     </div>
   );
 };
