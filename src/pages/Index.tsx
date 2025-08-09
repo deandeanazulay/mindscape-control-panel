@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { AuthMenu } from "@/components/auth/AuthMenu";
 import GoalForm from "@/components/goals/GoalForm";
 import GoalsList from "@/components/goals/GoalsList";
+import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 
 const PANEL_SIZE = { w: typeof window !== 'undefined' ? window.innerWidth : 375, h: typeof window !== 'undefined' ? window.innerHeight : 667 };
 
@@ -164,8 +165,46 @@ function AnalyzePanel() {
   );
 }
 
+function DPad({ pos, setPos }: { pos: [number, number]; setPos: Dispatch<SetStateAction<[number, number]>> }) {
+  const canLeft = pos[0] > 0;
+  const canRight = pos[0] < 2;
+  const canUp = pos[1] > 0;
+  const canDown = pos[1] < 2;
+
+  const moveLeft = () => setPos((p) => [Math.max(0, p[0] - 1), p[1]]);
+  const moveRight = () => setPos((p) => [Math.min(2, p[0] + 1), p[1]]);
+  const moveUp = () => setPos((p) => [p[0], Math.max(0, p[1] - 1)]);
+  const moveDown = () => setPos((p) => [p[0], Math.min(2, p[1] + 1)]);
+
+  return (
+    <div className="grid grid-cols-3 grid-rows-3 gap-1">
+      <div />
+      <Button size="icon" variant="secondary" aria-label="Move up" onClick={moveUp} disabled={!canUp}>
+        <ChevronUp className="w-4 h-4" />
+      </Button>
+      <div />
+
+      <Button size="icon" variant="secondary" aria-label="Move left" onClick={moveLeft} disabled={!canLeft}>
+        <ChevronLeft className="w-4 h-4" />
+      </Button>
+      <div className="w-10 h-10 grid place-items-center">
+        <span className="block w-2 h-2 rounded-full bg-muted" />
+      </div>
+      <Button size="icon" variant="secondary" aria-label="Move right" onClick={moveRight} disabled={!canRight}>
+        <ChevronRight className="w-4 h-4" />
+      </Button>
+
+      <div />
+      <Button size="icon" variant="secondary" aria-label="Move down" onClick={moveDown} disabled={!canDown}>
+        <ChevronDown className="w-4 h-4" />
+      </Button>
+      <div />
+    </div>
+  );
+}
+
 const Index = () => {
-  const { pos, onPointerDown, onPointerUp, current } = useSwipeNavigation();
+  const { pos, setPos, onPointerDown, onPointerUp, current } = useSwipeNavigation();
 
   // Signature moment: soft reactive spotlight following pointer
   const glowRef = useRef<HTMLDivElement>(null);
@@ -228,6 +267,17 @@ const Index = () => {
           {[0,1,2].map((i)=> (
             <span key={i} className={`block rounded-full smooth ${i===pos[1] ? 'bg-accent' : 'bg-muted'} ${i===pos[1] ? 'w-2 h-4' : 'w-2 h-2'}`} />
           ))}
+        </div>
+      </div>
+
+      {/* D-Pad controls */}
+      <div className="absolute bottom-4 right-4 z-10 pointer-events-none">
+        <div
+          className="glass-panel rounded-xl p-2 elev smooth pointer-events-auto"
+          onPointerDown={(e)=>e.stopPropagation()}
+          onPointerUp={(e)=>e.stopPropagation()}
+        >
+          <DPad pos={pos} setPos={setPos} />
         </div>
       </div>
 
