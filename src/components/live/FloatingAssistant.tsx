@@ -60,7 +60,14 @@ export function FloatingAssistant({ task, onUpdated }: { task: Task | null; onUp
   useEffect(() => {
     // Toggle global spacing class so floating widgets can avoid the drawer
     document.body.classList.toggle('assistant-open', open);
-    return () => { document.body.classList.remove('assistant-open'); };
+    // Dynamically set CSS vars for FAB/compass spacing
+    document.body.style.setProperty('--fab-bottom', open ? '128px' : '96px');
+    document.body.style.setProperty('--compass-right', open ? '144px' : '112px');
+    return () => {
+      document.body.classList.remove('assistant-open');
+      document.body.style.removeProperty('--fab-bottom');
+      document.body.style.removeProperty('--compass-right');
+    };
   }, [open]);
 
   return (
