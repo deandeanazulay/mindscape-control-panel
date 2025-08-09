@@ -3,11 +3,14 @@ type Props = {
   type: "core" | "listen" | "read" | "boss";
   locked?: boolean;
   active?: boolean;
+  onClick?: () => void;
 };
 
-export default function LessonNode({ type, locked, active }: Props) {
+export default function LessonNode({ type, locked, active, onClick }: Props) {
   return (
     <button
+      type="button"
+      onClick={onClick}
       disabled={locked}
       className={[
         "relative w-[104px] h-[104px] rounded-full select-none",
@@ -16,7 +19,9 @@ export default function LessonNode({ type, locked, active }: Props) {
         active ? "node-pulse" : "",
         locked ? "opacity-50" : "hover:scale-[1.02] active:scale-[0.98] transition-transform",
       ].join(" ")}
-      aria-label={locked ? "Locked lesson" : "Lesson"}
+      aria-label={locked ? "Locked lesson" : `Lesson: ${type}`}
+      aria-pressed={active ? true : undefined}
+      aria-disabled={locked ? true : undefined}
     >
       {/* ring */}
       <span className="absolute inset-[-8px] rounded-full ring-2 ring-[hsl(var(--node-ring))]/70 ring-offset-0 node-ring-shadow" />

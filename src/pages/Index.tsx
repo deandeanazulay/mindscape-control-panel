@@ -11,7 +11,7 @@ import { PanelHeaderUnified } from "@/components/layout/PanelHeaderUnified";
 import DailyKickoff from "@/components/live/DailyKickoff";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import LandingPage from "./LandingPage";
-
+import { type PathNode } from "@/game/path/path.data";
 type PanelKey = "live" | "archive" | "control" | "create" | "analyze";
 
 const panelMap: Record<PanelKey, { grid: [number, number]; title: string; subtitle: string } > = {
@@ -110,11 +110,11 @@ function useSwipeNavigation() {
 }
 
 
-function LivePanel({ onManageRoadmaps }: { onManageRoadmaps?: () => void }) {
+function LivePanel({ onManageRoadmaps, onNodeClick, onNavSelect }: { onManageRoadmaps?: () => void; onNodeClick?: (node: PathNode) => void; onNavSelect?: (key: 'home'|'map'|'live'|'rank'|'aurora') => void }) {
   // Render the new Duolingo-style path home
   return (
     <section className="w-full h-full flex flex-col">
-      <GameHome />
+      <GameHome onNodeClick={onNodeClick} onNavSelect={onNavSelect} />
     </section>
   );
 }
@@ -335,18 +335,51 @@ const Index = () => {
     if (last !== today) setShowKickoff(true);
   }, []);
 
-  const handleKickoffComplete = () => {
-    try {
-      const today = new Date().toISOString().slice(0, 10);
-      localStorage.setItem("kickoff.last", today);
-    } catch {}
-    setShowKickoff(false);
-    gotoPanel("live");
-  };
+const handleKickoffComplete = () => {
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+    localStorage.setItem("kickoff.last", today);
+  } catch {}
+  setShowKickoff(false);
+  gotoPanel("live");
+};
 
-  if (!initializing && !user) {
-    return <LandingPage />;
+// Path interactions
+const handleNodeClick = (node: PathNode) => {
+  if (node.locked) {
+    toast({ title: "Locked", description: "Complete prior lessons to unlock." });
+    return;
   }
+  switch (node.type) {
+    case "core":
+      gotoPanel("live");
+      toast({ title: "Core lesson", description: "Starting focus session..." });
+      break;
+    case "read":
+      gotoPanel("create");
+      toast({ title: "Reading", description: "Opening reading tools..." });
+      break;
+    case "listen":
+      gotoPanel("archive");
+      toast({ title: "Listening", description: "Opening audio archive..." });
+      break;
+    case "boss":
+      toast({ title: "Boss locked", description: "Beat all core lessons first." });
+      break;
+  }
+};
+
+const handleNavSelect = (key: 'home'|'map'|'live'|'rank'|'aurora') => {
+  if (key === 'home') gotoPanel('live');
+  if (key === 'map') gotoPanel('control');
+  if (key === 'live') gotoPanel('create');
+  if (key === 'rank') gotoPanel('analyze');
+  if (key === 'aurora') gotoPanel('archive');
+};
+
+if (!initializing && !user) {
+  return <LandingPage />;
+}
 
   return (
     <div className="w-screen h-screen overflow-hidden relative" onPointerDown={onPointerDown} onPointerUp={onPointerUp}>
@@ -357,7 +390,7 @@ const Index = () => {
         <div className="relative" style={{ width: '300vw', height: '300vh' }}>
           {/* Place five panels */}
           <div className="absolute" style={{ left: '100vw', top: '100vh', width: '100vw', height: '100vh' }}>
-            <LivePanel onManageRoadmaps={() => gotoPanel("control")} />
+            <LivePanel onManageRoadmaps={() => gotoPanel("control")} onNodeClick={handleNodeClick} onNavSelect={handleNavSelect} />
           </div>
           <div className="absolute" style={{ left: '0', top: '100vh', width: '100vw', height: '100vh' }}>
             <ArchivePanel />

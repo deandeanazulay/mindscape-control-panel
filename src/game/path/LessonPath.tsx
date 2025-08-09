@@ -1,8 +1,8 @@
-import { nodes } from "./path.data";
+import { nodes, type PathNode } from "./path.data";
 import LessonNode from "./LessonNode";
 import AvatarBlob from "./AvatarBlob";
 
-export default function LessonPath() {
+export default function LessonPath({ onNodeClick }: { onNodeClick?: (node: PathNode) => void }) {
   return (
     <div className="mx-auto max-w-[560px] pt-20 pb-28 relative">
       {/* faint vignettes */}
@@ -25,7 +25,7 @@ export default function LessonPath() {
             )}
             {/* node */}
             <div className={i % 2 ? "pl-32" : "pr-32"}>
-              <LessonNode {...n} />
+              <LessonNode {...n} onClick={() => onNodeClick?.(n)} />
             </div>
             {/* avatar stands on active node */}
             {n.active && (
