@@ -20,6 +20,33 @@ const panelMap: Record<PanelKey, { grid: [number, number]; title: string; subtit
   analyze: { grid: [1,2], title: "Analyze", subtitle: "Decision tools: If–Then, Pros/Cons, One Metric" },
 };
 
+// Navigation helpers based on actual occupied panels
+const GRID_MIN = 0;
+const GRID_MAX = 2;
+
+function panelAt(x: number, y: number): PanelKey | null {
+  const entries = Object.entries(panelMap) as [PanelKey, (typeof panelMap)[PanelKey]][];
+  const found = entries.find(([, cfg]) => cfg.grid[0] === x && cfg.grid[1] === y);
+  return found ? found[0] : null;
+}
+
+function nextOccupied(
+  x: number,
+  y: number,
+  dir: "left" | "right" | "up" | "down"
+): [number, number] | null {
+  let cx = x;
+  let cy = y;
+  const stepX = dir === "left" ? -1 : dir === "right" ? 1 : 0;
+  const stepY = dir === "up" ? -1 : dir === "down" ? 1 : 0;
+  while (true) {
+    cx += stepX;
+    cy += stepY;
+    if (cx < GRID_MIN || cx > GRID_MAX || cy < GRID_MIN || cy > GRID_MAX) return null;
+    if (panelAt(cx, cy)) return [cx, cy];
+  }
+}
+
 function useSwipeNavigation() {
   const [pos, setPos] = useState<[number, number]>([1, 1]); // x,y in 0..2
   const [lastMove, setLastMove] = useState<"left" | "right" | "up" | "down" | null>(null);
@@ -32,23 +59,18 @@ function useSwipeNavigation() {
     return found?.[0] ?? "live";
   }, [pos]);
 
-  const moveLeft = () => {
-    setLastMove("left");
-    setPos((p) => [Math.max(0, p[0] - 1), p[1]]);
-  };
-  const moveRight = () => {
-    setLastMove("right");
-    setPos((p) => [Math.min(2, p[0] + 1), p[1]]);
-  };
-  const moveUp = () => {
-    setLastMove("up");
-    setPos((p) => [p[0], Math.max(0, p[1] - 1)]);
-  };
-  const moveDown = () => {
-    setLastMove("down");
-    setPos((p) => [p[0], Math.min(2, p[1] + 1)]);
+  const tryMove = (dir: "left" | "right" | "up" | "down") => {
+    const next = nextOccupied(pos[0], pos[1], dir);
+    if (next) {
+      setLastMove(dir);
+      setPos(next);
+    }
   };
 
+  const moveLeft = () => tryMove("left");
+  const moveRight = () => tryMove("right");
+  const moveUp = () => tryMove("up");
+  const moveDown = () => tryMove("down");
   const gotoPanel = (key: PanelKey) => {
     const [x, y] = panelMap[key].grid;
     setPos([x, y]);
@@ -138,37 +160,28 @@ function AnalyzePanel() {
 
 function OverlayArrows({
   pos,
-  lastMove,
   moveLeft,
   moveRight,
   moveUp,
   moveDown,
 }: {
   pos: [number, number];
-  lastMove: "left" | "right" | "up" | "down" | null;
   moveLeft: () => void;
   moveRight: () => void;
   moveUp: () => void;
   moveDown: () => void;
 }) {
-  const canLeft = pos[0] > 0;
-  const canRight = pos[0] < 2;
-  const canUp = pos[1] > 0;
-  const canDown = pos[1] < 2;
-
-  let onlyReverse: "left" | "right" | "up" | "down" | null = null;
-  if (pos[1] === 0 && lastMove === "up") onlyReverse = "down";
-  else if (pos[1] === 2 && lastMove === "down") onlyReverse = "up";
-  else if (pos[0] === 0 && lastMove === "left") onlyReverse = "right";
-  else if (pos[0] === 2 && lastMove === "right") onlyReverse = "left";
+  const canLeft = nextOccupied(pos[0], pos[1], "left") !== null;
+  const canRight = nextOccupied(pos[0], pos[1], "right") !== null;
+  const canUp = nextOccupied(pos[0], pos[1], "up") !== null;
+  const canDown = nextOccupied(pos[0], pos[1], "down") !== null;
 
   const btnClass = "pointer-events-auto rounded-full glass-panel elev shadow-sm";
   const stop = (e: React.PointerEvent) => e.stopPropagation();
 
   return (
     <div className="fixed inset-0 z-20 pointer-events-none">
-      {/* Up */}
-      {(onlyReverse === "up" || (!onlyReverse && canUp)) && (
+      {canUp && (
         <Button
           size="icon"
           variant="secondary"
@@ -181,8 +194,7 @@ function OverlayArrows({
           <ChevronUp className="w-4 h-4" />
         </Button>
       )}
-      {/* Down */}
-      {(onlyReverse === "down" || (!onlyReverse && canDown)) && (
+      {canDown && (
         <Button
           size="icon"
           variant="secondary"
@@ -195,8 +207,7 @@ function OverlayArrows({
           <ChevronDown className="w-4 h-4" />
         </Button>
       )}
-      {/* Left */}
-      {(onlyReverse === "left" || (!onlyReverse && canLeft)) && (
+      {canLeft && (
         <Button
           size="icon"
           variant="secondary"
@@ -209,8 +220,7 @@ function OverlayArrows({
           <ChevronLeft className="w-4 h-4" />
         </Button>
       )}
-      {/* Right */}
-      {(onlyReverse === "right" || (!onlyReverse && canRight)) && (
+      {canRight && (
         <Button
           size="icon"
           variant="secondary"
@@ -228,7 +238,7 @@ function OverlayArrows({
 }
 
 const Index = () => {
-  const { pos, onPointerDown, onPointerUp, current, lastMove, moveLeft, moveRight, moveUp, moveDown, gotoPanel } = useSwipeNavigation();
+  const { pos, onPointerDown, onPointerUp, current, moveLeft, moveRight, moveUp, moveDown, gotoPanel } = useSwipeNavigation();
 
   // Signature moment: soft reactive spotlight following pointer
   const glowRef = useRef<HTMLDivElement>(null);
@@ -290,7 +300,6 @@ const Index = () => {
       {/* Floating edge arrows */}
       <OverlayArrows
         pos={pos}
-        lastMove={lastMove}
         moveLeft={moveLeft}
         moveRight={moveRight}
         moveUp={moveUp}
