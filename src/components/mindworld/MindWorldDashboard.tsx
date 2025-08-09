@@ -5,7 +5,7 @@ import GameCanvas from "@/game/GameCanvas";
 import VirtualJoystick from "./VirtualJoystick";
 import ActionButton from "./ActionButton";
 import WorldOverlayRouter, { type OverlayId } from "./WorldOverlayRouter";
-import HUDBar from "@/game/hud/HUDBar";
+import { GameHUD } from "@/components/hud/GameHUD";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useGameStore } from "@/game/store";
@@ -99,10 +99,8 @@ export default function MindWorldDashboard() {
         {joyEnabled && <VirtualJoystick onChange={setVec} />}
         <ActionButton label="Action" onPress={() => setActionTick((t) => t + 1)} />
 
-        {/* Overlays */}
-        <WorldOverlayRouter id={overlay} onClose={() => setOverlay(null)} />
         {/* HUD overlay */}
-        <HUDBar />
+        <GameHUD />
       </HubScene>
     </section>
   );

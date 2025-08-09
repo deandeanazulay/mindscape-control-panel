@@ -104,38 +104,50 @@ export default function GameCanvas({ inputVec, actionTick, overlayId, onEnter }:
     return interacting || nearPortal ? 1.12 : 0.92;
   }, [nearest, overlayId]);
   return (
-    <div className="absolute inset-x-0 top-0" style={{ bottom: 'var(--hud-height)' }} aria-label="CSS World Canvas">
-      <div className="world-canvas smooth" style={{ transform: `scale(${zoom})`, transformOrigin: '50% 85%' }}>
-        {/* Ground */}
-        <div className="world-ground" />
+    <div className="relative w-full h-full overflow-hidden">
+      {/* Camera viewport clamped above HUD */}
+      <div
+        className="absolute inset-x-0 top-0"
+        style={{ bottom: `calc(var(--hud-h) + var(--hud-gap))` }}
+        aria-label="CSS World Canvas"
+      >
+        <div className="world-canvas smooth" style={{ transform: `scale(${zoom})`, transformOrigin: '50% 85%' }}>
+          {/* Ground */}
+          <div className="world-ground" />
 
-        {/* Track and buildings */}
-        <div ref={trackRef} className="world-track" style={{ width: WORLD_WIDTH, transform: `translate3d(${offsetX}px, 0, 0)` }}>
-          {/* Buildings / portals */}
-          {portals.map((p) => {
-            const near = Math.abs(p.x - x) < 48;
-            return (
-              <div key={p.label} className="building" style={{ left: p.x - 110 }}>
-                <div className="label">{p.label}</div>
-                <div className={`door ${near ? 'glow' : ''}`} />
-                {near && <div className="hint">Press Action to Enter</div>}
+          {/* Track and buildings */}
+          <div ref={trackRef} className="world-track" style={{ width: WORLD_WIDTH, transform: `translate3d(${offsetX}px, 0, 0)` }}>
+            {/* Buildings / portals */}
+            {portals.map((p) => {
+              const near = Math.abs(p.x - x) < 48;
+              return (
+                <div key={p.label} className="building" style={{ left: p.x - 110 }}>
+                  <div className="label">{p.label}</div>
+                  <div className={`door ${near ? 'glow' : ''}`} />
+                  {near && <div className="hint">Press Action to Enter</div>}
+                </div>
+              );
+            })}
+
+            {/* Player */}
+            <div className="player" style={{ left: x - 40 }}>
+              <div className="avatar-blob relative idle-float">
+                <div className="av-head" />
+                <div className="av-body" />
+                <div className="av-ball" />
               </div>
-            );
-          })}
-
-          {/* Player */}
-          <div className="player" style={{ left: x - 40 }}>
-            <div className="avatar-blob relative idle-float">
-              <div className="av-head" />
-              <div className="av-body" />
-              <div className="av-ball" />
             </div>
           </div>
-        </div>
 
-        {/* Foreground particles */}
-        <div className="parallax-foreground" aria-hidden />
+          {/* Foreground particles */}
+          <div className="parallax-foreground" aria-hidden />
+        </div>
+        {/* Floor line sits just above the HUD */}
+        <div className="world-floor-line" />
       </div>
+
+      {/* mask to ensure nothing bleeds into HUD */}
+      <div className="hud-mask" />
     </div>
   );
 }

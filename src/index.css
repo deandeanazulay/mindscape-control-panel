@@ -363,6 +363,61 @@ All colors MUST be HSL.
   border-radius: 9999px;
 }
 
+/* HUD tokens and utilities */
+:root{
+  --hud-h: 128px;          /* desktop HUD height */
+  --hud-h-sm: 164px;       /* mobile/two-line HUD height */
+  --hud-gap: 12px;         /* gap above HUD (the “white line” gutter) */
+  --hud-radius: 22px;
+  --hud-glow: 0 0% 100% / 0.35;
+  --hud-border: 0 0% 100% / 0.14;
+  --hp: 356 80% 56%;
+  --mp: 211 90% 58%;
+  --xp: 198 92% 58%;
+}
+
+/* MapleStory-style glass */
+.hud-glass {
+  background: linear-gradient(180deg, hsl(0 0% 100% / 0.18), hsl(0 0% 100% / 0.06));
+  border: 1px solid hsl(var(--hud-border));
+  border-radius: var(--hud-radius);
+  box-shadow:
+    0 10px 30px hsl(0 0% 0% / 0.35),
+    inset 0 1px 0 hsl(0 0% 100% / 0.25);
+  backdrop-filter: blur(14px) saturate(1.1);
+}
+
+/* soft light spot behind widgets */
+.hud-spot {
+  position: absolute; inset: -40px -40px auto auto;
+  width: 180px; height: 180px; border-radius: 9999px;
+  background: radial-gradient(40% 40% at 50% 50%, hsl(var(--hud-glow)) 0%, transparent 70%);
+  filter: blur(12px); pointer-events: none;
+}
+
+/* bars */
+.bar { height: 10px; border-radius: 9999px; background: hsl(0 0% 100% / 0.12); overflow: hidden; }
+.bar > i { display:block; height:100%; border-radius: 9999px; }
+
+/* white floor line under map */
+.world-floor-line {
+  position:absolute; left:0; right:0; bottom:0;
+  height:2px; background: hsl(0 0% 100% / 0.35);
+  pointer-events:none;
+}
+
+/* blocks world from drawing under the HUD */
+.hud-mask {
+  position: fixed; left:0; right:0; bottom:0;
+  background: linear-gradient(180deg, hsl(var(--background) / 0) 0%, hsl(var(--background) / 0.55) 18%, hsl(var(--background) / 0.75) 60%, hsl(var(--background) / 0.92) 100%);
+  pointer-events:none; z-index: 39;
+}
+
+/* responsive tokens */
+@media (max-width: 768px){
+  :root { --hud-h: var(--hud-h-sm); }
+}
+
 /* Quick slot glyphs */
 .hud-glyph { width: 22px; height: 22px; display: block; filter: drop-shadow(0 1px 0 hsl(var(--background) / 0.3)); }
 .hud-glyph.focus  { background: radial-gradient(circle, hsl(var(--primary)) 60%, transparent 61%); border-radius: 50%; }
