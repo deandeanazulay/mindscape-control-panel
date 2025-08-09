@@ -44,7 +44,11 @@ export default function RoadmapsManager() {
     // Fetch next task and update current_focus
     const { data: next, error: nextErr } = await supabase
       .from("tasks").select("id").eq("user_id", user.id).eq("roadmap_id", roadmapId)
-      .in("status", ["doing","todo"]).order("position", { ascending: true, nullsFirst: false }).order("created_at", { ascending: true }).limit(1);
+      .eq("status", "todo")
+      .order("position", { ascending: true, nullsFirst: true })
+      .order("due_at", { ascending: true, nullsFirst: false })
+      .order("created_at", { ascending: true })
+      .limit(1);
     if (nextErr) console.error(nextErr);
     const nextTask = next?.[0] as any | undefined;
     await supabase.from("current_focus").upsert({ user_id: user.id, task_id: nextTask ? nextTask.id : null, started_at: new Date().toISOString() });

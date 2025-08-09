@@ -27,6 +27,10 @@ export default function TasksManager({ roadmapId }: { roadmapId: string }) {
   const [due, setDue] = useState<string>("");
   const busy = useMemo(()=> loading, [loading]);
 
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState<string>("");
+  const [editDue, setEditDue] = useState<string>("");
+
   const fetchTasks = async () => {
     if (!user) return;
     setLoading(true);
@@ -58,6 +62,37 @@ export default function TasksManager({ roadmapId }: { roadmapId: string }) {
   };
 
   useEffect(() => { fetchTasks(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [user, roadmapId]);
+
+  const formatLocalInput = (iso: string) => {
+    const d = new Date(iso);
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const y = d.getFullYear();
+    const m = pad(d.getMonth()+1);
+    const day = pad(d.getDate());
+    const h = pad(d.getHours());
+    const min = pad(d.getMinutes());
+    return `${y}-${m}-${day}T${h}:${min}`;
+  };
+
+  const startEdit = (t: Task) => {
+    setEditingId(t.id);
+    setEditTitle(t.title);
+    setEditDue(t.due_at ? formatLocalInput(t.due_at) : "");
+  };
+
+  const saveEdit = async () => {
+    if (!user || !editingId) return;
+    const title = editTitle.trim();
+    const due_at = editDue ? new Date(editDue).toISOString() : null;
+    const { error } = await supabase.from("tasks").update({ title, due_at }).eq("id", editingId).eq("user_id", user.id);
+    if (error) console.error(error);
+    setEditingId(null);
+    await fetchTasks();
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+  };
 
   const addTask = async () => {
     if (!user) { toast({ title: "Sign in required", description: "Connect Supabase to add tasks." }); return; }
@@ -133,14 +168,30 @@ export default function TasksManager({ roadmapId }: { roadmapId: string }) {
         {tasks.map((t, idx)=> (
           <div key={t.id} className="rounded-lg border border-border p-3 grid gap-3">
             <div className="flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <div className="text-sm font-medium truncate">{t.title}</div>
-                {t.due_at && <div className="text-xs text-muted-foreground">Due: {new Date(t.due_at).toLocaleString()}</div>}
+              <div className="min-w-0 flex-1">
+                {editingId === t.id ? (
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    <Input value={editTitle} onChange={(e)=> setEditTitle(e.target.value)} placeholder="Task title" className="h-9" />
+                    <Input type="datetime-local" value={editDue} onChange={(e)=> setEditDue(e.target.value)} className="h-9" />
+                  </div>
+                ) : (
+                  <div>
+                    <div className="text-sm font-medium truncate">{t.title}</div>
+                    {t.due_at && <div className="text-xs text-muted-foreground">Due: {new Date(t.due_at).toLocaleString()}</div>}
+                  </div>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <Button size="sm" variant="outline" onClick={()=> move(t.id, -1)} disabled={idx===0}>Up</Button>
                 <Button size="sm" variant="outline" onClick={()=> move(t.id, 1)} disabled={idx===tasks.length-1}>Down</Button>
-                <Button size="sm" variant="outline" onClick={()=> renameTask(t.id)}>Rename</Button>
+                {editingId === t.id ? (
+                  <>
+                    <Button size="sm" variant="secondary" onClick={saveEdit}>Save</Button>
+                    <Button size="sm" variant="outline" onClick={cancelEdit}>Cancel</Button>
+                  </>
+                ) : (
+                  <Button size="sm" variant="outline" onClick={()=> startEdit(t)}>Edit</Button>
+                )}
                 <Button size="sm" variant="destructive" onClick={()=> removeTask(t.id)}>Delete</Button>
               </div>
             </div>

@@ -37,6 +37,7 @@ export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?:
   const [task, setTask] = useState<Task | null>(null);
   const [loading, setLoading] = useState(true);
   const { percent, refresh: refreshProgress } = useRoadmapProgress(user?.id ?? null, activeRoadmap?.id ?? null);
+  const [reloadKey, setReloadKey] = useState(0);
 
   // Load roadmaps, active roadmap, and focused task
   useEffect(() => {
@@ -125,7 +126,30 @@ export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?:
     return () => {
       cancelled = true;
     };
-  }, [user, initializing]);
+  }, [user, initializing, reloadKey]);
+
+  useEffect(() => {
+    if (!user) return;
+    const channel = supabase
+      .channel("live-sync")
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "roadmaps" }, (payload) => {
+        if ((payload.new as any)?.user_id === user.id || (payload.old as any)?.user_id === user.id) {
+          setReloadKey((k) => k + 1);
+        }
+      })
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "current_focus" }, (payload) => {
+        if ((payload.new as any)?.user_id === user.id || (payload.old as any)?.user_id === user.id) {
+          setReloadKey((k) => k + 1);
+        }
+      })
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "current_focus" }, (payload) => {
+        if ((payload.new as any)?.user_id === user.id) {
+          setReloadKey((k) => k + 1);
+        }
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [user]);
 
   const switchActive = async (roadmapId: string) => {
     if (!user) {
