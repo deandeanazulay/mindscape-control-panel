@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import HubScene from "./HubScene";
 
-import PhaserGame from "@/game/PhaserGame";
+import GameCanvas from "@/game/GameCanvas";
 import VirtualJoystick from "./VirtualJoystick";
 import ActionButton from "./ActionButton";
 import WorldOverlayRouter, { type OverlayId } from "./WorldOverlayRouter";
@@ -84,9 +84,9 @@ export default function MindWorldDashboard() {
     <section className="w-full h-full">
       <HubScene>
 
-        {/* Phaser side-scrolling world */}
+        {/* CSS side-scrolling world */}
         <div className="absolute inset-0">
-          <PhaserGame inputVec={vec} actionTick={actionTick} overlayId={overlay} onEnter={handleEnter} />
+          <GameCanvas inputVec={vec} actionTick={actionTick} overlayId={overlay} onEnter={handleEnter} />
         </div>
 
         {/* Mobile controls */}
