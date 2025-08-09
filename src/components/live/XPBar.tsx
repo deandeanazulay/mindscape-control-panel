@@ -47,6 +47,18 @@ export function XPBar() {
     return () => window.removeEventListener('xp-sparkle', h as any);
   }, []);
 
+  // Update numbers immediately when server confirms new total_xp
+  useEffect(() => {
+    const onServerTotal = (e: any) => {
+      const next = e?.detail?.total_xp;
+      if (typeof next === "number") {
+        setTotal(next);
+      }
+    };
+    window.addEventListener("xp-total-update", onServerTotal as any);
+    return () => window.removeEventListener("xp-total-update", onServerTotal as any);
+  }, []);
+
   if (!user) return null;
 
   return (

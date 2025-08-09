@@ -73,6 +73,30 @@ export type Database = {
           },
         ]
       }
+      events: {
+        Row: {
+          id: string
+          payload: Json
+          ts: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          payload?: Json
+          ts?: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          payload?: Json
+          ts?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       goals: {
         Row: {
           created_at: string
@@ -222,6 +246,39 @@ export type Database = {
         }
         Relationships: []
       }
+      quests: {
+        Row: {
+          completed_bool: boolean
+          created_at: string
+          date: string
+          id: string
+          quest_id: string
+          updated_at: string
+          user_id: string
+          xp_awarded_int: number
+        }
+        Insert: {
+          completed_bool?: boolean
+          created_at?: string
+          date?: string
+          id?: string
+          quest_id: string
+          updated_at?: string
+          user_id: string
+          xp_awarded_int?: number
+        }
+        Update: {
+          completed_bool?: boolean
+          created_at?: string
+          date?: string
+          id?: string
+          quest_id?: string
+          updated_at?: string
+          user_id?: string
+          xp_awarded_int?: number
+        }
+        Relationships: []
+      }
       roadmaps: {
         Row: {
           color: string | null
@@ -253,6 +310,48 @@ export type Database = {
           position?: number | null
           status?: string
           title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      sessions: {
+        Row: {
+          created_at: string
+          ended_at: string | null
+          id: string
+          minutes: number | null
+          mood_after: string | null
+          mood_before: string | null
+          quality_score: number | null
+          started_at: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          minutes?: number | null
+          mood_after?: string | null
+          mood_before?: string | null
+          quality_score?: number | null
+          started_at?: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          minutes?: number | null
+          mood_after?: string | null
+          mood_before?: string | null
+          quality_score?: number | null
+          started_at?: string
+          type?: string
           updated_at?: string
           user_id?: string
         }
