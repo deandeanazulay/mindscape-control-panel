@@ -46,6 +46,11 @@ function useSwipeNavigation() {
     setPos((p) => [p[0], Math.min(2, p[1] + 1)]);
   };
 
+  const gotoPanel = (key: PanelKey) => {
+    const [x, y] = panelMap[key].grid;
+    setPos([x, y]);
+  };
+
   const onPointerDown = (e: React.PointerEvent) => {
     start.current = { x: e.clientX, y: e.clientY };
   };
@@ -74,7 +79,7 @@ function useSwipeNavigation() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  return { pos, onPointerDown, onPointerUp, current, lastMove, moveLeft, moveRight, moveUp, moveDown };
+  return { pos, onPointerDown, onPointerUp, current, lastMove, moveLeft, moveRight, moveUp, moveDown, gotoPanel };
 }
 
 function PanelHeader({ title, subtitle }: { title: string; subtitle: string }) {
@@ -88,11 +93,11 @@ function PanelHeader({ title, subtitle }: { title: string; subtitle: string }) {
   );
 }
 
-function LivePanel() {
+function LivePanel({ onManageRoadmaps }: { onManageRoadmaps?: () => void }) {
   // Render the new Live Focus experience
   return (
     <section className="w-full h-full flex flex-col">
-      <LiveFocusView />
+      <LiveFocusView onManageRoadmaps={onManageRoadmaps} />
     </section>
   );
 }
@@ -230,7 +235,7 @@ function OverlayArrows({
 }
 
 const Index = () => {
-  const { pos, onPointerDown, onPointerUp, current, lastMove, moveLeft, moveRight, moveUp, moveDown } = useSwipeNavigation();
+  const { pos, onPointerDown, onPointerUp, current, lastMove, moveLeft, moveRight, moveUp, moveDown, gotoPanel } = useSwipeNavigation();
 
   // Signature moment: soft reactive spotlight following pointer
   const glowRef = useRef<HTMLDivElement>(null);
@@ -263,7 +268,7 @@ const Index = () => {
         <div className="relative" style={{ width: '300vw', height: '300vh' }}>
           {/* Place five panels */}
           <div className="absolute" style={{ left: '100vw', top: '100vh', width: '100vw', height: '100vh' }}>
-            <LivePanel />
+            <LivePanel onManageRoadmaps={() => gotoPanel("control")} />
           </div>
           <div className="absolute" style={{ left: '0', top: '100vh', width: '100vw', height: '100vh' }}>
             <ArchivePanel />

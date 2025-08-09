@@ -28,7 +28,7 @@ type Task = {
   position: number | null;
 };
 
-export default function LiveFocusView() {
+export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?: () => void }) {
   const { user, initializing } = useSupabaseAuth();
   const [activeRoadmap, setActiveRoadmap] = useState<Roadmap | null>(null);
   const [roadmaps, setRoadmaps] = useState<Roadmap[]>([]);
@@ -226,7 +226,10 @@ export default function LiveFocusView() {
             {/* Create roadmap quick action (simple stub) */}
             <Button
               variant="secondary"
-              onClick={() => toast({ title: "Roadmaps", description: "Manage your roadmaps and tasks in the Control panel for now." })}
+              onClick={() => {
+                if (onManageRoadmaps) onManageRoadmaps();
+                else toast({ title: "Roadmaps", description: "Manage your roadmaps and tasks in the Control panel for now." });
+              }}
             >
               Manage
             </Button>
