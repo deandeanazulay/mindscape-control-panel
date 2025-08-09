@@ -8,7 +8,8 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AuthPage from "./pages/Auth";
 import MindWorldDashboard from "@/components/mindworld/MindWorldDashboard";
- 
+import BrowserShell from "@/routes/browser/BrowserShell";
+import ExtensionPage from "@/pages/Extension";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -22,6 +23,8 @@ const App = () => (
           <Route path="/world" element={<MindWorldDashboard />} />
           <Route path="/home" element={<Index />} />
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/browser" element={<BrowserShell />} />
+          <Route path="/extension" element={<ExtensionPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
