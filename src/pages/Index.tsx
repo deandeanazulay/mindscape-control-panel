@@ -378,6 +378,36 @@ const handleNavSelect = (key: 'home'|'map'|'live'|'rank'|'aurora') => {
   if (key === 'aurora') gotoPanel('archive');
 };
 
+// HUD Global Event Bus integration
+useEffect(() => {
+  const go = (panel: PanelKey, title?: string, description?: string) => {
+    gotoPanel(panel);
+    if (title) toast({ title, description });
+  };
+  const onFocus = () => go('live', 'Focus', 'Starting focus session…');
+  const onHypno = () => go('create', 'Hypnosis', 'Opening hypnosis tools…');
+  const onVoice = () => go('archive', 'Voice', 'Opening voice notes…');
+  const onNote = () => go('create', 'Notes', 'Capture a quick note');
+  const onAnalyze = () => go('analyze', 'Analyze', 'Decision tools');
+  const onMap = () => go('control', 'Map', 'Roadmaps and tasks');
+
+  document.addEventListener('mos:startFocus' as any, onFocus as any);
+  document.addEventListener('mos:startHypnosis' as any, onHypno as any);
+  document.addEventListener('mos:voiceNote' as any, onVoice as any);
+  document.addEventListener('mos:addNote' as any, onNote as any);
+  document.addEventListener('mos:openAnalyze' as any, onAnalyze as any);
+  document.addEventListener('mos:openMap' as any, onMap as any);
+
+  return () => {
+    document.removeEventListener('mos:startFocus' as any, onFocus as any);
+    document.removeEventListener('mos:startHypnosis' as any, onHypno as any);
+    document.removeEventListener('mos:voiceNote' as any, onVoice as any);
+    document.removeEventListener('mos:addNote' as any, onNote as any);
+    document.removeEventListener('mos:openAnalyze' as any, onAnalyze as any);
+    document.removeEventListener('mos:openMap' as any, onMap as any);
+  };
+}, [gotoPanel]);
+
 if (!initializing && !user) {
   return <LandingPage />;
 }
