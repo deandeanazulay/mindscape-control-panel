@@ -1,9 +1,9 @@
-
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import { useState } from "react";
+import { StickyNote } from "lucide-react";
 
 type Roadmap = {
   id: string;
@@ -55,14 +55,15 @@ export function CurrentFocusCard({
       return;
     }
 
-    // 2) pick next task in this roadmap (todo/doing by position asc)
+    // 2) pick next task in this roadmap (next TODO by position, then due)
     const { data: nextTasks, error: nextErr } = await supabase
       .from("tasks")
       .select("id, title, description, due_at, roadmap_id, status, position")
       .eq("user_id", user.id)
       .eq("roadmap_id", task.roadmap_id)
-      .in("status", ["todo", "doing"])
-      .order("position", { ascending: true, nullsFirst: false })
+      .eq("status", "todo")
+      .order("position", { ascending: true, nullsFirst: true })
+      .order("due_at", { ascending: true, nullsFirst: false })
       .order("created_at", { ascending: true })
       .limit(1);
     if (nextErr) {
@@ -80,6 +81,8 @@ export function CurrentFocusCard({
       started_at: now,
     });
     if (cfErr) console.error(cfErr);
+
+    try { navigator.vibrate?.(10); } catch {}
 
     toast({
       title: next ? "Great job!" : "Well done",
@@ -114,6 +117,14 @@ export function CurrentFocusCard({
           )}
         </div>
         <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Add note"
+            onClick={() => toast({ title: "Quick note", description: "Use Notes below to capture a thought." })}
+          >
+            <StickyNote className="w-4 h-4" />
+          </Button>
           <Button variant="secondary" disabled={!task || busy} onClick={markDoneAndAdvance}>
             {busy ? "Updating..." : task ? "Done" : "No Task"}
           </Button>

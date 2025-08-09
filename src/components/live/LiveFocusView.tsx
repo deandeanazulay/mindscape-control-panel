@@ -95,8 +95,9 @@ export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?:
           .select("id, title, description, due_at, roadmap_id, status, position")
           .eq("user_id", user.id)
           .eq("roadmap_id", active.id)
-          .in("status", ["doing", "todo"])
-          .order("position", { ascending: true, nullsFirst: false })
+          .eq("status", "todo")
+          .order("position", { ascending: true, nullsFirst: true })
+          .order("due_at", { ascending: true, nullsFirst: false })
           .order("created_at", { ascending: true })
           .limit(1);
         if (nextErr) {
@@ -164,8 +165,9 @@ export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?:
         .select("id, title, description, due_at, roadmap_id, status, position")
         .eq("user_id", user.id)
         .eq("roadmap_id", newActive.id)
-        .in("status", ["doing", "todo"])
-        .order("position", { ascending: true, nullsFirst: false })
+        .eq("status", "todo")
+        .order("position", { ascending: true, nullsFirst: true })
+        .order("due_at", { ascending: true, nullsFirst: false })
         .order("created_at", { ascending: true })
         .limit(1);
       if (!nextErr) {
@@ -221,11 +223,13 @@ export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?:
           </div>
         )}
 
-        <CurrentFocusCard
-          activeRoadmap={activeRoadmap}
-          task={task}
-          onAdvance={(next) => { setTask(next); refreshProgress(); }}
-        />
+        <div key={task?.id ?? 'none'} className="animate-in fade-in-50 duration-300">
+          <CurrentFocusCard
+            activeRoadmap={activeRoadmap}
+            task={task}
+            onAdvance={(next) => { setTask(next); refreshProgress(); }}
+          />
+        </div>
 
         <QuickActionsBar currentTask={task} />
 
