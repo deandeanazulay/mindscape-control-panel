@@ -6,6 +6,7 @@ import RoadmapsManager from "@/components/control/RoadmapsManager";
 import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import LiveFocusView from "@/components/live/LiveFocusView";
 import ArchivePanel from "@/components/archive/ArchivePanel";
+import { SoundControl } from "@/components/sounds/SoundControl";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import { useNavigate } from "react-router-dom";
 
@@ -266,6 +267,7 @@ const Index = () => {
         {!initializing && !user && (
           <Button variant="secondary" onClick={() => navigate("/auth")}>Sign in</Button>
         )}
+        <SoundControl buttonSize="icon" buttonVariant="ghost" />
         <AuthMenu />
       </nav>
 

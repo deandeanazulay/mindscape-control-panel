@@ -1,24 +1,19 @@
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { useBackgroundAudio } from "@/hooks/useBackgroundAudio";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { SoundControl } from "@/components/sounds/SoundControl";
+
+import { useEffect, useRef, useState } from "react";
 
 type Task = {
   id: string;
 };
 
-type Sound = {
-  id: string;
-  title: string;
-  category: string | null;
-  audio_url: string;
-};
 
 type Track = {
   id: string;
@@ -28,7 +23,7 @@ type Track = {
 };
 
 export function QuickActionsBar({ currentTask }: { currentTask: Task | null }) {
-  const audio = useBackgroundAudio();
+  
   const { user } = useSupabaseAuth();
 
   // Hypnosis tracks (publicly readable)
@@ -144,83 +139,11 @@ export function QuickActionsBar({ currentTask }: { currentTask: Task | null }) {
     } catch {}
   };
 
-  const categories = useMemo(() => {
-    const cats = new Map<string, Sound[]>();
-    audio.availableSounds.forEach((s: any) => {
-      const key = s.category ?? "General";
-      if (!cats.has(key)) cats.set(key, []);
-      cats.get(key)!.push(s);
-    });
-    return Array.from(cats.entries());
-  }, [audio.availableSounds]);
 
   return (
     <div className="glass-panel rounded-xl p-3 elev flex flex-wrap items-center gap-2">
       {/* Play Sound */}
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button size="sm" variant="secondary">Play Sound</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Background sound</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="text-sm text-muted-foreground">
-              Pick an ambience to play in the background. It will persist across sessions.
-            </div>
-            <div className="max-h-64 overflow-y-auto space-y-3">
-              {categories.map(([cat, list]) => (
-                <div key={cat}>
-                  <div className="text-xs font-medium mb-2">{cat}</div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {list.map((s) => (
-                      <button
-                        key={s.id}
-                        onClick={async () => {
-                          await audio.pickSound(s as any);
-                          await audio.play();
-                          toast({ title: "Playing", description: `${s.title}` });
-                        }}
-                        className={`w-full text-left p-3 rounded border border-border hover:bg-muted/40 smooth ${
-                          audio.selectedSound?.id === s.id ? "bg-muted" : ""
-                        }`}
-                      >
-                        <div className="font-medium text-sm">{s.title}</div>
-                        <div className="text-xs text-muted-foreground truncate">{s.audio_url}</div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-              {audio.availableSounds.length === 0 && <div className="text-sm text-muted-foreground">No sounds available yet.</div>}
-            </div>
-            <div className="flex items-center gap-2">
-              <Button size="sm" onClick={audio.play} disabled={!audio.selectedSound}>Play</Button>
-              <Button size="sm" variant="outline" onClick={audio.pause}>Pause</Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => audio.setLooping(!audio.loop)}
-              >
-                {audio.loop ? "Loop: On" : "Loop: Off"}
-              </Button>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground w-16">Volume</span>
-              <Input
-                type="range"
-                min={0}
-                max={1}
-                step={0.01}
-                value={audio.volume}
-                onChange={(e) => audio.setVolume(Number(e.target.value))}
-              />
-              <span className="text-xs text-muted-foreground">{Math.round(audio.volume * 100)}%</span>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <SoundControl label="Play Sound" buttonVariant="secondary" buttonSize="sm" />
 
       {/* Hypnosis quick-play */}
       <Dialog>
