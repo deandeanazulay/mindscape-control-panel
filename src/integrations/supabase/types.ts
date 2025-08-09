@@ -44,6 +44,35 @@ export type Database = {
         }
         Relationships: []
       }
+      current_focus: {
+        Row: {
+          started_at: string
+          task_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          started_at?: string
+          task_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          started_at?: string
+          task_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "current_focus_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       goals: {
         Row: {
           created_at: string
@@ -193,6 +222,42 @@ export type Database = {
         }
         Relationships: []
       }
+      roadmaps: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          id: string
+          position: number | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          position?: number | null
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          position?: number | null
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       sleep_sessions: {
         Row: {
           ambience_sound_id: string | null
@@ -280,6 +345,56 @@ export type Database = {
         }
         Relationships: []
       }
+      tasks: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          description: string | null
+          due_at: string | null
+          id: string
+          position: number | null
+          roadmap_id: string
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          due_at?: string | null
+          id?: string
+          position?: number | null
+          roadmap_id: string
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          due_at?: string | null
+          id?: string
+          position?: number | null
+          roadmap_id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_roadmap_id_fkey"
+            columns: ["roadmap_id"]
+            isOneToOne: false
+            referencedRelation: "roadmaps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tracks: {
         Row: {
           audio_url: string
@@ -315,6 +430,44 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      user_audio_settings: {
+        Row: {
+          background_sound_id: string | null
+          created_at: string
+          is_playing: boolean
+          loop: boolean
+          updated_at: string
+          user_id: string
+          volume: number
+        }
+        Insert: {
+          background_sound_id?: string | null
+          created_at?: string
+          is_playing?: boolean
+          loop?: boolean
+          updated_at?: string
+          user_id: string
+          volume?: number
+        }
+        Update: {
+          background_sound_id?: string | null
+          created_at?: string
+          is_playing?: boolean
+          loop?: boolean
+          updated_at?: string
+          user_id?: string
+          volume?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_audio_settings_background_sound_id_fkey"
+            columns: ["background_sound_id"]
+            isOneToOne: false
+            referencedRelation: "sounds"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
