@@ -2,14 +2,15 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import FocusFlame from "@/components/mascot/FocusFlame";
 
 const copy = {
   hero: {
-    headline: "Mind Operating System",
+    headline: "One Focus. Massive Results.",
     subheadline: "A calm, focused dashboard for your day. Plan once, act with clarity.",
     ctaPrimary: "Get Started Free",
     ctaSecondary: "See how it works",
-    micro: "No credit card. Sign in with email."
+    micro: "No credit card · Cancel anytime."
   },
   socialProof: {
     title: "Loved by focused builders",
@@ -70,15 +71,16 @@ export default function LandingPage() {
         <div className="font-semibold tracking-wide">MOS</div>
         <div className="flex items-center gap-3">
           <a href="#how" className="text-sm text-muted-foreground story-link">How it works</a>
-          <Button asChild variant="primary" className="h-11 rounded-xl px-5 motion-safe:active:scale-95">
-            <Link to="/auth">Get Started Free</Link>
-          </Button>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4">
         {/* HERO */}
         <section className="mt-10 glass-panel rounded-2xl p-6 elev hero-ambient animate-fade-in">
+          <div className="flex items-center gap-3 mb-3">
+            <FocusFlame size={56} />
+            <span className="text-sm text-muted-foreground">I’ll help you stay on fire.</span>
+          </div>
           <h1 className="text-3xl sm:text-4xl font-bold mb-2">{copy.hero.headline}</h1>
           <p className="text-base sm:text-lg text-muted-foreground mb-4">{copy.hero.subheadline}</p>
           <div className="flex items-center gap-3">

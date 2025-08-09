@@ -37,7 +37,7 @@ export function MoodCarousel() {
             key={m.key}
             size="sm"
             variant={active === m.key ? "solid" : "soft"}
-            className={`rounded-full px-3 py-2 ${active === m.key ? 'ring-2 ring-[hsl(var(--ring))]' : ''}`}
+            className={`rounded-full px-3 py-2 transition-transform motion-safe:active:scale-95 ${active === m.key ? 'ring-2 ring-[hsl(var(--ring))]' : ''}`}
             onClick={() => onSelect(m.key)}
             aria-pressed={active === m.key}
           >
