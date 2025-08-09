@@ -14,6 +14,7 @@ import { PanelHeaderUnified } from "@/components/layout/PanelHeaderUnified";
 import QuickAddTaskFAB from "@/components/tasks/QuickAddTaskFAB";
 import { StreakBadge } from "@/components/live/StreakBadge";
 import { XPBar } from "@/components/live/XPBar";
+import ShareCard from "@/components/share/ShareCard";
  
  type Roadmap = {
   id: string;
@@ -41,6 +42,7 @@ export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?:
   const [loading, setLoading] = useState(true);
   const { percent, refresh: refreshProgress } = useRoadmapProgress(user?.id ?? null, activeRoadmap?.id ?? null);
   const [reloadKey, setReloadKey] = useState(0);
+  const [shareOpen, setShareOpen] = useState(false);
 
   // Load roadmaps, active roadmap, and focused task
   useEffect(() => {
