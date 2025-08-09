@@ -11,7 +11,8 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ProgressBar } from "@/components/live/ProgressBar";
 import { useRoadmapProgress } from "@/hooks/useRoadmapProgress";
-
+import QuickAddTaskFAB from "@/components/tasks/QuickAddTaskFAB";
+ 
 export default function RoadmapsManager() {
   const { user } = useSupabaseAuth();
   const [items, setItems] = useState<RoadmapItem[]>([]);
@@ -199,6 +200,7 @@ export default function RoadmapsManager() {
           <ProgressBar percent={percent} />
         </div>
       )}
+      <QuickAddTaskFAB roadmapId={selectedId} />
     </div>
   );
 }

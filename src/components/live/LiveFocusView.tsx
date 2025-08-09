@@ -11,8 +11,9 @@ import { MoodCheck } from "./MoodCheck";
 
 import { useRoadmapProgress } from "@/hooks/useRoadmapProgress";
 import { PanelHeaderUnified } from "@/components/layout/PanelHeaderUnified";
-
-type Roadmap = {
+import QuickAddTaskFAB from "@/components/tasks/QuickAddTaskFAB";
+ 
+ type Roadmap = {
   id: string;
   title: string;
   description: string | null;
@@ -261,6 +262,7 @@ export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?:
 
         <MoodCheck />
       </main>
+      <QuickAddTaskFAB roadmapId={activeRoadmap?.id ?? null} />
     </section>
   );
 }
