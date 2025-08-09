@@ -1,6 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 
+// Heuristics for domains that commonly block iframes
+const BLOCKED_HOSTS = [/youtube\.com$/, /google\./, /x\.com$/, /instagram\.com$/, /facebook\.com$/, /tiktok\.com$/, /github\.com$/];
+
+function isLikelyBlocked(u: string) {
+  try {
+    const url = new URL(u);
+    return BLOCKED_HOSTS.some((r) => r.test(url.hostname));
+  } catch {
+    return false;
+  }
+}
+
 export function EmbedPane({ url }: { url: string }) {
   const [loaded, setLoaded] = useState(false);
   const [assumedBlocked, setAssumedBlocked] = useState(false);
@@ -40,7 +52,7 @@ export function EmbedPane({ url }: { url: string }) {
       />
 
       {/* Fallback if the site blocks embedding */}
-      {!loaded && assumedBlocked && (
+      {(isLikelyBlocked(url) || (!loaded && assumedBlocked)) && (
         <div className="absolute inset-0 grid place-items-center">
           <div className="glass-panel rounded-xl p-5 text-center max-w-md">
             <h2 className="font-semibold">This site blocks embedding</h2>

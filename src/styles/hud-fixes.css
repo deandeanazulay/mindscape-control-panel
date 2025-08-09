@@ -1,0 +1,21 @@
+/* HUD readability adjustments using design system tokens (HSL) */
+
+/* Darken the glass when HUD sits on bright content so white text keeps contrast */
+.hud-readable .hud-glass {
+  background: linear-gradient(
+    180deg,
+    hsl(var(--background) / 0.68),
+    hsl(var(--background) / 0.50)
+  );
+  border: 1px solid hsl(var(--glass-border));
+  color: hsl(var(--foreground));
+}
+
+/* Subtle glow stays neutral to avoid washing text */
+.hud-readable .hud-spot {
+  background: radial-gradient(40% 40% at 50% 50%, hsl(var(--foreground) / 0.22) 0%, transparent 70%);
+}
+
+/* Bars remain visible on darker glass */
+.hud-readable .bar { background: hsl(0 0% 100% / 0.12); }
+.hud-readable .bar > i { box-shadow: 0 0 10px hsl(var(--accent) / 0.15); }

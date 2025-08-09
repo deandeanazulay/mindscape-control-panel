@@ -25,7 +25,7 @@ export function GameHUD() {
     return () => window.removeEventListener('keydown', onKey);
   }, [run]);
   return (
-    <div className="fixed left-0 right-0 z-40" style={{ bottom: 0 }}>
+    <div className="fixed left-0 right-0 z-40 hud-readable" style={{ bottom: 0 }}>
       {/* gutter between world and HUD */}
       <div style={{ height: "var(--hud-gap)" }} />
 
