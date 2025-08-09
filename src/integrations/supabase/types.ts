@@ -469,11 +469,75 @@ export type Database = {
           },
         ]
       }
+      user_stats: {
+        Row: {
+          created_at: string
+          last_active_date: string | null
+          level: number
+          streak_count: number
+          total_xp: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          last_active_date?: string | null
+          level?: number
+          streak_count?: number
+          total_xp?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          last_active_date?: string | null
+          level?: number
+          streak_count?: number
+          total_xp?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      xp_events: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          metadata: Json
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          metadata?: Json
+          type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          metadata?: Json
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      award_xp: {
+        Args: { activity: string; amount: number; metadata?: Json }
+        Returns: {
+          total_xp: number
+          streak_count: number
+        }[]
+      }
       is_admin: {
         Args: { uid: string }
         Returns: boolean

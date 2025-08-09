@@ -12,6 +12,8 @@ import { MoodCheck } from "./MoodCheck";
 import { useRoadmapProgress } from "@/hooks/useRoadmapProgress";
 import { PanelHeaderUnified } from "@/components/layout/PanelHeaderUnified";
 import QuickAddTaskFAB from "@/components/tasks/QuickAddTaskFAB";
+import { StreakBadge } from "@/components/live/StreakBadge";
+import { XPBar } from "@/components/live/XPBar";
  
  type Roadmap = {
   id: string;
@@ -214,6 +216,7 @@ export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?:
         subtitle="Focus on one thing, right now."
         actions={
           <>
+            <StreakBadge />
             <select
               className="text-sm bg-background border border-border rounded px-3 py-2"
               value={activeRoadmap?.id ?? ""}
@@ -252,6 +255,7 @@ export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?:
           <CurrentFocusCard
             activeRoadmap={activeRoadmap}
             task={task}
+            progressPercent={percent}
             onAdvance={(next) => { setTask(next); refreshProgress(); }}
           />
         </div>
@@ -259,6 +263,7 @@ export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?:
         <QuickActionsBar currentTask={task} />
 
         <ProgressBar percent={percent} />
+        <XPBar />
 
         <MoodCheck />
       </main>

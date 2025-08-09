@@ -90,7 +90,7 @@ export default function QuickAddTaskFAB({ roadmapId, onCreated }: Props) {
         }}
         className="fixed z-50 right-4 rounded-full glass-panel elev smooth hover-scale focus:outline-none focus:ring-2 focus:ring-ring"
         style={{
-          bottom: `calc(env(safe-area-inset-bottom) + 96px)`, // stay above chat bubble
+          bottom: `calc(env(safe-area-inset-bottom) + var(--fab-bottom, 96px))`,
           width: 56,
           height: 56,
         }}

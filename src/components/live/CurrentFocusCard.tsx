@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import { useState } from "react";
 import { StickyNote } from "lucide-react";
+import ShareCard from "@/components/share/ShareCard";
 
 type Roadmap = {
   id: string;
@@ -24,14 +25,17 @@ type Task = {
 export function CurrentFocusCard({
   activeRoadmap,
   task,
+  progressPercent = 0,
   onAdvance,
 }: {
   activeRoadmap: Roadmap | null;
   task: Task | null;
+  progressPercent?: number;
   onAdvance: (next: Task | null) => void;
 }) {
   const { user } = useSupabaseAuth();
   const [busy, setBusy] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
 
   const markDoneAndAdvance = async () => {
     if (!user) {
@@ -89,9 +93,17 @@ export function CurrentFocusCard({
       description: next ? `Next up: ${next.title}` : "No more tasks in this roadmap.",
     });
 
+    // Award XP for task completion and update streak
+    try {
+      await supabase.rpc('award_xp', { activity: 'task_complete', amount: 10, metadata: { task_id: task.id } as any });
+    } catch (e) { console.error(e); }
+
     onAdvance(next);
+    setShareOpen(true);
     setBusy(false);
   };
+
+  
 
   return (
     <div className="glass-panel rounded-xl p-5 elev">
@@ -136,3 +148,4 @@ export function CurrentFocusCard({
     </div>
   );
 }
+

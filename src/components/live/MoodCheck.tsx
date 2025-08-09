@@ -4,6 +4,7 @@ import { toast } from "@/hooks/use-toast";
 
 export function MoodCheck() {
   const click = (mood: string) => {
+    try { localStorage.setItem('mood.last', mood); } catch {}
     toast({
       title: `Mood: ${mood}`,
       description: "Thanks! We'll use this to improve suggestions soon.",

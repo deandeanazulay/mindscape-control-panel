@@ -57,6 +57,12 @@ export function FloatingAssistant({ task, onUpdated }: { task: Task | null; onUp
     }, 450);
   };
 
+  useEffect(() => {
+    // Toggle global spacing class so floating widgets can avoid the drawer
+    document.body.classList.toggle('assistant-open', open);
+    return () => { document.body.classList.remove('assistant-open'); };
+  }, [open]);
+
   return (
     <>
       {/* Floating chat bubble */}

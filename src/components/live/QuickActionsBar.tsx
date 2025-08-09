@@ -149,6 +149,10 @@ type Track = {
           window.clearInterval(id);
           setPreOpen(false);
           setLibraryOpen(true);
+          // Award XP for starting a hypnosis session
+          (async () => {
+            try { await supabase.rpc('award_xp', { activity: 'hypnosis_session', amount: 20, metadata: { mode } as any }); } catch {}
+          })();
           return 0;
         }
         return c - 1;

@@ -292,7 +292,7 @@ function CompassIndicator({
       style={{
         width: 72,
         height: 72,
-        right: 16,
+        right: `calc(env(safe-area-inset-right) + var(--compass-right, 112px))`,
         bottom: `calc(env(safe-area-inset-bottom) + 16px)` as unknown as number,
       }}
     >
