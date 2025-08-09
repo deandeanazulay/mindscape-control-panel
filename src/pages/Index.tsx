@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { AuthMenu } from "@/components/auth/AuthMenu";
@@ -6,7 +6,7 @@ import GoalForm from "@/components/goals/GoalForm";
 import GoalsList from "@/components/goals/GoalsList";
 import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 
-const PANEL_SIZE = { w: typeof window !== 'undefined' ? window.innerWidth : 375, h: typeof window !== 'undefined' ? window.innerHeight : 667 };
+
 
 type PanelKey = "live" | "archive" | "control" | "create" | "analyze";
 
@@ -19,15 +19,33 @@ const panelMap: Record<PanelKey, { grid: [number, number]; title: string; subtit
 };
 
 function useSwipeNavigation() {
-  const [pos, setPos] = useState<[number, number]>([1,1]); // x,y in 0..2
-  const start = useRef<{x:number;y:number}|null>(null);
+  const [pos, setPos] = useState<[number, number]>([1, 1]); // x,y in 0..2
+  const [lastMove, setLastMove] = useState<"left" | "right" | "up" | "down" | null>(null);
+  const start = useRef<{ x: number; y: number } | null>(null);
   const threshold = 50; // px
 
   const current: PanelKey = useMemo(() => {
     const entries = Object.entries(panelMap) as [PanelKey, typeof panelMap.live][];
     const found = entries.find(([, cfg]) => cfg.grid[0] === pos[0] && cfg.grid[1] === pos[1]);
-    return (found?.[0] ?? "live");
+    return found?.[0] ?? "live";
   }, [pos]);
+
+  const moveLeft = () => {
+    setLastMove("left");
+    setPos((p) => [Math.max(0, p[0] - 1), p[1]]);
+  };
+  const moveRight = () => {
+    setLastMove("right");
+    setPos((p) => [Math.min(2, p[0] + 1), p[1]]);
+  };
+  const moveUp = () => {
+    setLastMove("up");
+    setPos((p) => [p[0], Math.max(0, p[1] - 1)]);
+  };
+  const moveDown = () => {
+    setLastMove("down");
+    setPos((p) => [p[0], Math.min(2, p[1] + 1)]);
+  };
 
   const onPointerDown = (e: React.PointerEvent) => {
     start.current = { x: e.clientX, y: e.clientY };
@@ -40,24 +58,24 @@ function useSwipeNavigation() {
     if (Math.abs(dx) < threshold && Math.abs(dy) < threshold) return;
     // Horizontal swipe dominates if greater absolute movement
     if (Math.abs(dx) > Math.abs(dy)) {
-      setPos((p) => [Math.min(2, Math.max(0, p[0] + (dx < 0 ? 1 : -1))), p[1]]);
+      if (dx < 0) moveRight(); else moveLeft();
     } else {
-      setPos((p) => [p[0], Math.min(2, Math.max(0, p[1] + (dy < 0 ? 1 : -1)))]);
+      if (dy < 0) moveDown(); else moveUp();
     }
   };
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft') setPos((p)=>[Math.max(0,p[0]-1), p[1]]);
-      if (e.key === 'ArrowRight') setPos((p)=>[Math.min(2,p[0]+1), p[1]]);
-      if (e.key === 'ArrowUp') setPos((p)=>[p[0], Math.max(0,p[1]-1)]);
-      if (e.key === 'ArrowDown') setPos((p)=>[p[0], Math.min(2,p[1]+1)]);
+      if (e.key === "ArrowLeft") moveLeft();
+      if (e.key === "ArrowRight") moveRight();
+      if (e.key === "ArrowUp") moveUp();
+      if (e.key === "ArrowDown") moveDown();
     };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  return { pos, setPos, onPointerDown, onPointerUp, current };
+  return { pos, onPointerDown, onPointerUp, current, lastMove, moveLeft, moveRight, moveUp, moveDown };
 }
 
 function PanelHeader({ title, subtitle }: { title: string; subtitle: string }) {
@@ -75,7 +93,7 @@ function LivePanel() {
   return (
     <section className="w-full h-full flex flex-col">
       <PanelHeader title="Live" subtitle="Capture a moment with state tags and link to goals" />
-      <main className="flex-1 flex flex-col gap-4 p-6">
+      <main className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-4 p-6">
         <div className="glass-panel rounded-xl p-4 flex flex-col gap-3 smooth">
           <div className="rounded-lg h-56 bg-muted/30 grid place-items-center">
             <span className="text-sm text-muted-foreground">Camera preview / Upload coming soon</span>
@@ -105,7 +123,7 @@ function ArchivePanel() {
   return (
     <section className="w-full h-full flex flex-col">
       <PanelHeader title="Archive" subtitle="Your organized memories and references" />
-      <main className="flex-1 p-6 grid grid-cols-2 sm:grid-cols-3 gap-4 content-start">
+      <main className="flex-1 min-h-0 overflow-y-auto p-6 grid grid-cols-2 sm:grid-cols-3 gap-4 content-start">
         {folders.map((f)=> (
           <article key={f} className="glass-panel rounded-xl p-4 elev smooth hover:scale-[1.02]">
             <h3 className="font-semibold">{f}</h3>
@@ -124,7 +142,7 @@ function ControlPanel() {
   return (
     <section className="w-full h-full flex flex-col">
       <PanelHeader title="Control" subtitle="Manage goals with clarity" />
-      <main className="flex-1 p-6 max-w-xl mx-auto w-full">
+      <main className="flex-1 min-h-0 overflow-y-auto p-6 max-w-xl mx-auto w-full">
         <div className="glass-panel rounded-xl p-5 elev grid gap-6">
           <GoalForm />
           <div className="pt-2 border-t border-border">
@@ -140,7 +158,7 @@ function CreatePanel() {
   return (
     <section className="w-full h-full flex flex-col">
       <PanelHeader title="Create" subtitle="Guided prompts coming in Sprint 2" />
-      <main className="flex-1 p-6 grid place-items-center">
+      <main className="flex-1 min-h-0 overflow-y-auto p-6 grid place-items-center">
         <div className="glass-panel rounded-xl p-6 text-center max-w-md">
           <p className="text-sm text-muted-foreground">Prompt packs will help you capture ideas and convert them to goals or archive cards.</p>
         </div>
@@ -153,7 +171,7 @@ function AnalyzePanel() {
   return (
     <section className="w-full h-full flex flex-col">
       <PanelHeader title="Analyze" subtitle="Decision tools coming in Sprint 2" />
-      <main className="flex-1 p-6 grid grid-cols-2 sm:grid-cols-4 gap-4 content-start">
+      <main className="flex-1 min-h-0 overflow-y-auto p-6 grid grid-cols-2 sm:grid-cols-4 gap-4 content-start">
         {["If–Then","Pros / Cons","One Constraint","One Metric"].map((tool)=> (
           <button key={tool} onClick={()=> toast({ title: tool, description: "Will save as analysis cards linked to goals." })} className="glass-panel rounded-xl p-4 elev smooth hover:scale-[1.02] text-left">
             <span className="font-semibold">{tool}</span>
@@ -165,46 +183,98 @@ function AnalyzePanel() {
   );
 }
 
-function DPad({ pos, setPos }: { pos: [number, number]; setPos: Dispatch<SetStateAction<[number, number]>> }) {
+function OverlayArrows({
+  pos,
+  lastMove,
+  moveLeft,
+  moveRight,
+  moveUp,
+  moveDown,
+}: {
+  pos: [number, number];
+  lastMove: "left" | "right" | "up" | "down" | null;
+  moveLeft: () => void;
+  moveRight: () => void;
+  moveUp: () => void;
+  moveDown: () => void;
+}) {
   const canLeft = pos[0] > 0;
   const canRight = pos[0] < 2;
   const canUp = pos[1] > 0;
   const canDown = pos[1] < 2;
 
-  const moveLeft = () => setPos((p) => [Math.max(0, p[0] - 1), p[1]]);
-  const moveRight = () => setPos((p) => [Math.min(2, p[0] + 1), p[1]]);
-  const moveUp = () => setPos((p) => [p[0], Math.max(0, p[1] - 1)]);
-  const moveDown = () => setPos((p) => [p[0], Math.min(2, p[1] + 1)]);
+  let onlyReverse: "left" | "right" | "up" | "down" | null = null;
+  if (pos[1] === 0 && lastMove === "up") onlyReverse = "down";
+  else if (pos[1] === 2 && lastMove === "down") onlyReverse = "up";
+  else if (pos[0] === 0 && lastMove === "left") onlyReverse = "right";
+  else if (pos[0] === 2 && lastMove === "right") onlyReverse = "left";
+
+  const btnClass = "pointer-events-auto rounded-full glass-panel elev shadow-sm";
+  const stop = (e: React.PointerEvent) => e.stopPropagation();
 
   return (
-    <div className="grid grid-cols-3 grid-rows-3 gap-1">
-      <div />
-      <Button size="icon" variant="secondary" aria-label="Move up" onClick={moveUp} disabled={!canUp}>
-        <ChevronUp className="w-4 h-4" />
-      </Button>
-      <div />
-
-      <Button size="icon" variant="secondary" aria-label="Move left" onClick={moveLeft} disabled={!canLeft}>
-        <ChevronLeft className="w-4 h-4" />
-      </Button>
-      <div className="w-10 h-10 grid place-items-center">
-        <span className="block w-2 h-2 rounded-full bg-muted" />
-      </div>
-      <Button size="icon" variant="secondary" aria-label="Move right" onClick={moveRight} disabled={!canRight}>
-        <ChevronRight className="w-4 h-4" />
-      </Button>
-
-      <div />
-      <Button size="icon" variant="secondary" aria-label="Move down" onClick={moveDown} disabled={!canDown}>
-        <ChevronDown className="w-4 h-4" />
-      </Button>
-      <div />
+    <div className="fixed inset-0 z-20 pointer-events-none">
+      {/* Up */}
+      {(onlyReverse === "up" || (!onlyReverse && canUp)) && (
+        <Button
+          size="icon"
+          variant="secondary"
+          aria-label="Move up"
+          className={`${btnClass} fixed top-4 left-1/2 -translate-x-1/2`}
+          onPointerDown={stop}
+          onPointerUp={stop}
+          onClick={moveUp}
+        >
+          <ChevronUp className="w-4 h-4" />
+        </Button>
+      )}
+      {/* Down */}
+      {(onlyReverse === "down" || (!onlyReverse && canDown)) && (
+        <Button
+          size="icon"
+          variant="secondary"
+          aria-label="Move down"
+          className={`${btnClass} fixed bottom-4 left-1/2 -translate-x-1/2`}
+          onPointerDown={stop}
+          onPointerUp={stop}
+          onClick={moveDown}
+        >
+          <ChevronDown className="w-4 h-4" />
+        </Button>
+      )}
+      {/* Left */}
+      {(onlyReverse === "left" || (!onlyReverse && canLeft)) && (
+        <Button
+          size="icon"
+          variant="secondary"
+          aria-label="Move left"
+          className={`${btnClass} fixed left-4 top-1/2 -translate-y-1/2`}
+          onPointerDown={stop}
+          onPointerUp={stop}
+          onClick={moveLeft}
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </Button>
+      )}
+      {/* Right */}
+      {(onlyReverse === "right" || (!onlyReverse && canRight)) && (
+        <Button
+          size="icon"
+          variant="secondary"
+          aria-label="Move right"
+          className={`${btnClass} fixed right-4 top-1/2 -translate-y-1/2`}
+          onPointerDown={stop}
+          onPointerUp={stop}
+          onClick={moveRight}
+        >
+          <ChevronRight className="w-4 h-4" />
+        </Button>
+      )}
     </div>
   );
 }
-
 const Index = () => {
-  const { pos, setPos, onPointerDown, onPointerUp, current } = useSwipeNavigation();
+  const { pos, onPointerDown, onPointerUp, current, lastMove, moveLeft, moveRight, moveUp, moveDown } = useSwipeNavigation();
 
   // Signature moment: soft reactive spotlight following pointer
   const glowRef = useRef<HTMLDivElement>(null);
@@ -270,16 +340,15 @@ const Index = () => {
         </div>
       </div>
 
-      {/* D-Pad controls */}
-      <div className="absolute bottom-4 right-4 z-10 pointer-events-none">
-        <div
-          className="glass-panel rounded-xl p-2 elev smooth pointer-events-auto"
-          onPointerDown={(e)=>e.stopPropagation()}
-          onPointerUp={(e)=>e.stopPropagation()}
-        >
-          <DPad pos={pos} setPos={setPos} />
-        </div>
-      </div>
+      {/* Floating edge arrows */}
+      <OverlayArrows
+        pos={pos}
+        lastMove={lastMove}
+        moveLeft={moveLeft}
+        moveRight={moveRight}
+        moveUp={moveUp}
+        moveDown={moveDown}
+      />
 
       <footer className="absolute bottom-4 left-4 text-xs text-muted-foreground z-10">
         <span>{current.toUpperCase()}</span>
