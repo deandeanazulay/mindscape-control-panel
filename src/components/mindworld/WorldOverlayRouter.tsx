@@ -5,8 +5,9 @@ import ArchivePanel from "@/components/archive/ArchivePanel";
 import { MoodCarousel } from "@/components/live/MoodCarousel";
 import QuestBoard from "./QuestBoard";
 import HypnosisLauncher from "@/components/hypnosis/HypnosisLauncher";
+import AgentPanel from "@/components/agent/AgentPanel";
 
-export type OverlayId = "mentor" | "library" | "garden" | "focus" | "analyze";
+export type OverlayId = "mentor" | "library" | "garden" | "focus" | "analyze" | "agent";
 
 function OverlayShell({ title, children, onClose }: PropsWithChildren<{ title: string; onClose: () => void }>) {
   return (
@@ -65,6 +66,13 @@ export default function WorldOverlayRouter({ id, onClose }: { id: OverlayId | nu
             <QuestBoard />
           </div>
         </div>
+      </OverlayShell>
+    );
+  }
+  if (id === "agent") {
+    return (
+      <OverlayShell title="Aurora Agent" onClose={onClose}>
+        <AgentPanel />
       </OverlayShell>
     );
   }

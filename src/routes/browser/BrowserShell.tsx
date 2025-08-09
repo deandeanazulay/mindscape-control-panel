@@ -37,6 +37,7 @@ export default function BrowserShell() {
       "mos:startHypnosis": "mentor",
       "mos:openAnalyze": "analyze",
       "mos:openMap": "library",
+      "mos:openAgent": "agent",
     } as const;
     const handler = (e: Event) => {
       const id = map[(e as CustomEvent).type];

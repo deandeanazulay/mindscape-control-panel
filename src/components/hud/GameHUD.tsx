@@ -4,6 +4,7 @@ import { useGameStore } from "@/game/store";
 import { quickSlots } from "@/game/hud/hud.data";
 import { useHUDActions } from "@/game/hud/useHUDActions";
 import { EvolvingSphere } from "@/components/effects/EvolvingSphere";
+import { Mic } from "lucide-react";
 
 export function GameHUD() {
   const stats = useGameStore((s) => s.stats);
@@ -63,8 +64,8 @@ export function GameHUD() {
               <div className="bar"><i style={{ width: `${stats.xp}%`, background: `hsl(var(--xp))` }} /></div>
             </div>
 
-            {/* Right: quick actions */}
-            <div className="flex items-end md:items-center justify-end">
+            {/* Right: quick actions + mic */}
+            <div className="flex items-end md:items-center justify-end gap-3">
               <div className="grid grid-cols-6 gap-3 w-full md:w-auto">
                 {quickSlots.map((a) => (
                   <button
@@ -89,6 +90,19 @@ export function GameHUD() {
                   </button>
                 ))}
               </div>
+              <button
+                onClick={() => document.dispatchEvent(new CustomEvent('mos:openAgent'))}
+                className={cn(
+                  "group relative aspect-square rounded-xl hud-glass",
+                  "grid place-items-center text-white/90",
+                  "transition-transform hover:scale-[1.03] active:scale-95"
+                )}
+                aria-label="Open Aurora Agent"
+                title="Aurora Agent"
+              >
+                <Mic className="w-5 h-5" />
+                <div className="absolute -bottom-5 text-[11px] text-white/70">Agent</div>
+              </button>
             </div>
           </div>
         </div>
