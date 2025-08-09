@@ -8,55 +8,55 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Core surfaces */
-    --background: 220 25% 6%;
-    --foreground: 210 40% 98%;
+    /* Core surfaces - Neutral dark gray */
+    --background: 220 8% 8%; /* #121315 */
+    --foreground: 220 6% 93%; /* #ECEDEE */
 
-    --card: 220 22% 8%;
-    --card-foreground: 210 40% 98%;
+    --card: 215 10% 10%; /* #16181B */
+    --card-foreground: 220 6% 93%;
 
-    --popover: 220 22% 8%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 215 10% 10%;
+    --popover-foreground: 220 6% 93%;
 
-    /* Brand */
-    --primary: 262 83% 57%; /* premium violet */
+    /* Neutral accent (no purple) */
+    --primary: 215 7% 45%; /* #6B6F76 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 222 22% 18%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 215 10% 12%;
+    --secondary-foreground: 220 6% 93%;
 
-    --muted: 222 18% 16%;
-    --muted-foreground: 214 15% 70%;
+    --muted: 215 9% 14%;
+    --muted-foreground: 220 6% 66%; /* #A1A1AA */
 
-    --accent: 195 85% 52%; /* cyan accent for focus states */
-    --accent-foreground: 210 40% 98%;
+    --accent: 215 7% 45%; /* same neutral accent */
+    --accent-foreground: 220 6% 93%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 220 14% 22%;
-    --input: 220 14% 22%;
-    --ring: 195 85% 52%;
+    --border: 215 12% 19%; /* #2A2E34 */
+    --input: 215 12% 19%;
+    --ring: 214 20% 57%; /* #7F8EA3 */
 
     --radius: 0.9rem;
 
     /* Sidebar tokens */
-    --sidebar-background: 222 20% 10%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 262 83% 57%;
+    --sidebar-background: 220 8% 9%;
+    --sidebar-foreground: 220 6% 93%;
+    --sidebar-primary: 215 7% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 222 22% 18%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 220 14% 22%;
-    --sidebar-ring: 195 85% 52%;
+    --sidebar-accent: 215 10% 12%;
+    --sidebar-accent-foreground: 220 6% 93%;
+    --sidebar-border: 215 12% 19%;
+    --sidebar-ring: 214 20% 57%;
 
     /* Premium additions */
-    --glass-bg: 220 30% 12% / 0.55; /* hsla */
-    --glass-border: 220 14% 40% / 0.35;
+    --glass-bg: 215 12% 13% / 0.60; /* hsla of #1D2024 */
+    --glass-border: 215 12% 28% / 0.35;
     --shadow-elev: 0 16px 50px -16px hsl(var(--primary) / 0.35);
     --shadow-soft: 0 8px 30px -12px hsl(var(--foreground) / 0.08);
-    --gradient-primary: linear-gradient(140deg, hsl(var(--primary) / 0.95), hsl(var(--accent) / 0.85));
-    --gradient-surface: linear-gradient(180deg, hsl(220 30% 10% / 0.65), hsl(220 25% 8% / 0.4));
+    --gradient-primary: linear-gradient(140deg, hsl(var(--primary) / 0.90), hsl(var(--primary) / 0.70));
+    --gradient-surface: linear-gradient(180deg, hsl(215 12% 13% / 0.70), hsl(220 8% 8% / 0.50));
 
     /* Motion */
     --transition-smooth: all 300ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -69,19 +69,19 @@ All colors MUST be HSL.
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 262 83% 45%;
+    --primary: 215 7% 35%;
     --primary-foreground: 0 0% 100%;
     --secondary: 210 40% 96%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 195 85% 44%;
+    --accent: 215 7% 35%;
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 195 85% 44%;
+    --ring: 214 20% 45%;
     --glass-bg: 0 0% 100% / 0.55;
     --glass-border: 220 14% 60% / 0.35;
   }
@@ -101,7 +101,7 @@ All colors MUST be HSL.
     font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     background-image: radial-gradient(1200px 600px at 10% 10%, hsl(var(--primary) / 0.12), transparent 40%),
       radial-gradient(1000px 500px at 90% 30%, hsl(var(--accent) / 0.10), transparent 40%),
-      linear-gradient(180deg, hsl(220 25% 7%), hsl(220 25% 5%));
+      linear-gradient(180deg, hsl(220 8% 9%), hsl(220 8% 7%));
     background-attachment: fixed;
   }
 
