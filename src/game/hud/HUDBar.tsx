@@ -37,7 +37,7 @@ export default function HUDBar() {
             <button className="hud-icon bag" aria-label="Bag"/>
             <button className="hud-icon map" aria-label="Map" onClick={()=>run('openMap' as any)}/>
             <button className="hud-icon chat" aria-label="Chat"/>
-            <button className="hud-icon stick" aria-label="Joystick"/>
+            <button className="hud-icon stick" aria-label="Joystick" onClick={() => document.dispatchEvent(new CustomEvent('mos:toggleJoystick'))}/>
           </div>
 
           {/* Quick Slots: full width on small (second line), inline on large */}

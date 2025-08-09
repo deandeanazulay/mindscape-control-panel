@@ -18,9 +18,10 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/" element={<MindWorldDashboard />} />
           <Route path="/world" element={<MindWorldDashboard />} />
+          <Route path="/home" element={<Index />} />
+          <Route path="/auth" element={<AuthPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

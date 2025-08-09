@@ -66,11 +66,12 @@ export default class MindWorldScene extends Phaser.Scene {
 
     // Portals layout
     const portalDefs: { x: number; id: OverlayId; label: string }[] = [
-      { x: 500, id: "focus", label: "Hall of Focus" },
-      { x: 1200, id: "library", label: "Library" },
-      { x: 1900, id: "garden", label: "Mood Garden" },
-      { x: 2600, id: "mentor", label: "Mentor" },
-      { x: 3200, id: "analyze", label: "Analyze Lab" },
+      { x: 400, id: "focus", label: "Training Grounds" },
+      { x: 900, id: "mentor", label: "Mind Temple" },
+      { x: 1400, id: "library", label: "Sound Studio" },
+      { x: 1900, id: "library", label: "Idea Forest" },
+      { x: 2450, id: "library", label: "Memory Vault" },
+      { x: 3000, id: "analyze", label: "Arena" },
     ];
 
     const style: Phaser.Types.GameObjects.Text.TextStyle = {

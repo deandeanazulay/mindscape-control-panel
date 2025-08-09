@@ -13,15 +13,27 @@ function getMoodClass(): string {
 export default function HubScene({ children }: PropsWithChildren) {
   const [mood, setMood] = useState<string>(getMoodClass());
 
+  const [timeClass, setTimeClass] = useState<string>(() => {
+    const h = new Date().getHours();
+    if (h >= 6 && h < 12) return "world-day";
+    if (h >= 12 && h < 19) return "world-dusk";
+    return "world-night";
+  });
+
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
       if (e.key === "mood.last") {
         setMood(getMoodClass());
       }
     };
+    const updateTime = () => {
+      const h = new Date().getHours();
+      setTimeClass(h >= 6 && h < 12 ? "world-day" : h < 19 ? "world-dusk" : "world-night");
+    };
     window.addEventListener("storage", onStorage);
-    const t = setInterval(() => setMood(getMoodClass()), 1200);
-    return () => { window.removeEventListener("storage", onStorage); clearInterval(t); };
+    const tmood = setInterval(() => setMood(getMoodClass()), 1200);
+    const tclock = setInterval(updateTime, 60000);
+    return () => { window.removeEventListener("storage", onStorage); clearInterval(tmood); clearInterval(tclock); };
   }, []);
 
   const moodClass = useMemo(() => {
@@ -31,7 +43,7 @@ export default function HubScene({ children }: PropsWithChildren) {
   }, [mood]);
 
   return (
-    <div className={`relative w-full h-full hub-scene ${moodClass}`}>
+    <div className={`relative w-full h-full hub-scene ${moodClass} ${timeClass}`}>
       {/* Background layers */}
       <div className="absolute inset-0 world-sky" aria-hidden />
       <div className="absolute inset-x-0 bottom-0 h-1/2 world-hills" aria-hidden />

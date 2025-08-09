@@ -266,6 +266,26 @@ All colors MUST be HSL.
   filter: blur(1px);
 }
 .hub-scene .world-particles { background-image: radial-gradient(circle at 50% 20%, hsl(var(--accent) / 0.08) 0.5px, transparent 0.5px); background-size: 120px 120px; opacity: 0.35; }
+/* Time of day variants */
+.hub-scene.world-day .world-sky {
+  background-image:
+    radial-gradient(1400px 700px at 20% -10%, hsl(var(--primary) / 0.20), transparent 55%),
+    radial-gradient(1200px 600px at 80% 0%, hsl(var(--accent) / 0.16), transparent 50%),
+    linear-gradient(180deg, hsl(210 25% 18%), hsl(220 10% 10%));
+}
+.hub-scene.world-dusk .world-sky {
+  background-image:
+    radial-gradient(1400px 700px at 20% -10%, hsl(25 90% 55% / 0.20), transparent 55%),
+    radial-gradient(1200px 600px at 80% 0%, hsl(300 70% 60% / 0.18), transparent 50%),
+    linear-gradient(180deg, hsl(230 20% 14%), hsl(220 10% 8%));
+}
+.hub-scene.world-night .world-sky {
+  background-image:
+    radial-gradient(1400px 700px at 20% -10%, hsl(220 60% 50% / 0.15), transparent 55%),
+    radial-gradient(1200px 600px at 80% 0%, hsl(260 70% 50% / 0.15), transparent 50%),
+    linear-gradient(180deg, hsl(220 8% 8%), hsl(220 8% 6%));
+}
+.hub-scene.world-night .world-particles { opacity: 0.5; }
 
 /* Mood tints for hub scene */
 .hub-scene.calm { --primary: 210 90% 60%; --accent: 210 90% 60%; }
