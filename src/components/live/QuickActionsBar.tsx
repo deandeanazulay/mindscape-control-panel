@@ -134,14 +134,61 @@ type Track = {
     } catch {}
   };
 
+  // Hypnosis pre-roll and library
+  const [libraryOpen, setLibraryOpen] = useState(false);
+  const [preOpen, setPreOpen] = useState(false);
+  const [mode, setMode] = useState<'focus' | 'calm' | 'confidence'>(() => (localStorage.getItem('hypnosis.mode') as any) || 'focus');
+  const [countdown, setCountdown] = useState(3);
+
+  useEffect(() => {
+    if (!preOpen) return;
+    setCountdown(3);
+    const id = window.setInterval(() => {
+      setCountdown((c) => {
+        if (c <= 1) {
+          window.clearInterval(id);
+          setPreOpen(false);
+          setLibraryOpen(true);
+          return 0;
+        }
+        return c - 1;
+      });
+    }, 1000);
+    return () => window.clearInterval(id);
+  }, [preOpen]);
+
+  useEffect(() => {
+    try { localStorage.setItem('hypnosis.mode', mode); } catch {}
+  }, [mode]);
 
   return (
     <div className="glass-panel rounded-xl p-3 elev flex flex-wrap items-center gap-2 sm:gap-3">
       {/* Hypnosis quick-play */}
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button size="sm">Start Hypnosis</Button>
-        </DialogTrigger>
+      <Button size="sm" onClick={() => setPreOpen(true)}>Start Hypnosis</Button>
+
+      {/* Pre-roll dialog */}
+      <Dialog open={preOpen} onOpenChange={setPreOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Get ready</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="text-sm text-muted-foreground">Choose your mode for this session.</div>
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm" variant={mode==='focus'? 'default' : 'outline'} onClick={() => setMode('focus')}>Focus</Button>
+              <Button size="sm" variant={mode==='calm'? 'default' : 'outline'} onClick={() => setMode('calm')}>Calm</Button>
+              <Button size="sm" variant={mode==='confidence'? 'default' : 'outline'} onClick={() => setMode('confidence')}>Confidence</Button>
+            </div>
+            <div className="h-2 w-full bg-muted rounded">
+              <div className="h-2 bg-primary rounded" style={{ width: `${((3 - countdown) / 3) * 100}%` }} />
+            </div>
+            <div className="text-xs text-muted-foreground">Starting in {countdown}s…</div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Library dialog */}
+      <Dialog open={libraryOpen} onOpenChange={setLibraryOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Hypnosis library</DialogTitle>

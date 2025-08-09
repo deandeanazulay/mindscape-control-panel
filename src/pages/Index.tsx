@@ -6,10 +6,9 @@ import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react"
 import LiveFocusView from "@/components/live/LiveFocusView";
 import ArchivePanel from "@/components/archive/ArchivePanel";
 import { FloatingAssistant } from "@/components/live/FloatingAssistant";
-
-
 import AppHeader from "@/components/layout/AppHeader";
 import { PanelHeaderUnified } from "@/components/layout/PanelHeaderUnified";
+import DailyKickoff from "@/components/live/DailyKickoff";
 
 type PanelKey = "live" | "archive" | "control" | "create" | "analyze";
 
@@ -310,6 +309,7 @@ function CompassIndicator({
 
 const Index = () => {
   const { pos, onPointerDown, onPointerUp, current, moveLeft, moveRight, moveUp, moveDown, gotoPanel } = useSwipeNavigation();
+  const [showKickoff, setShowKickoff] = useState(false);
 
   // Signature moment: soft reactive spotlight following pointer
   const glowRef = useRef<HTMLDivElement>(null);
@@ -325,6 +325,21 @@ const Index = () => {
   }, []);
 
   const translate = `translate3d(${-pos[0]*100}vw, ${-pos[1]*100}vh, 0)`;
+
+  useEffect(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    const last = localStorage.getItem("kickoff.last");
+    if (last !== today) setShowKickoff(true);
+  }, []);
+
+  const handleKickoffComplete = () => {
+    try {
+      const today = new Date().toISOString().slice(0, 10);
+      localStorage.setItem("kickoff.last", today);
+    } catch {}
+    setShowKickoff(false);
+    gotoPanel("live");
+  };
 
   return (
     <div className="w-screen h-screen overflow-hidden relative" onPointerDown={onPointerDown} onPointerUp={onPointerUp}>
@@ -373,6 +388,9 @@ const Index = () => {
       <footer className="absolute bottom-4 left-4 text-xs text-muted-foreground z-10">
         <span>{current.toUpperCase()}</span>
       </footer>
+
+      {/* Daily Kickoff overlay */}
+      <DailyKickoff visible={showKickoff} onComplete={handleKickoffComplete} />
 
       {/* Global AI assistant */}
       <FloatingAssistant task={null} onUpdated={() => {}} />

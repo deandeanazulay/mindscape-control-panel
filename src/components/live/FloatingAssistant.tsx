@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
-import { MessageSquare, Send, X, Bot } from "lucide-react";
+import { MessageSquare, Send, X, Bot, Minimize2 } from "lucide-react";
 
 type Task = {
   id: string;
@@ -22,6 +22,7 @@ export function FloatingAssistant({ task, onUpdated }: { task: Task | null; onUp
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
+  const [minimized, setMinimized] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "welcome",
@@ -62,24 +63,33 @@ export function FloatingAssistant({ task, onUpdated }: { task: Task | null; onUp
       <button
         aria-label="Open assistant chat"
         onClick={() => setOpen(true)}
-        className="fixed z-40 bottom-4 right-4 w-14 h-14 rounded-full glass-panel elev grid place-items-center hover-scale smooth"
+        className="fixed z-40 w-14 h-14 rounded-full glass-panel elev grid place-items-center hover-scale smooth"
+        style={{
+          right: 'calc(env(safe-area-inset-right) + 12px)',
+          bottom: 'calc(env(safe-area-inset-bottom) + 12px)'
+        }}
       >
         <MessageSquare className="w-6 h-6" />
       </button>
 
       {/* Slide-up chat panel */}
       <Drawer open={open} onOpenChange={setOpen} shouldScaleBackground>
-        <DrawerContent className="p-0">
+        <DrawerContent className="p-0" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 96px)" }}>
           <DrawerHeader className="p-3 border-b">
             <div className="flex items-center justify-between">
               <DrawerTitle>Assistant</DrawerTitle>
-              <Button variant="ghost" size="icon" aria-label="Close chat" onClick={() => setOpen(false)}>
-                <X className="w-4 h-4" />
-              </Button>
+              <div className="flex items-center gap-1">
+                <Button variant="ghost" size="icon" aria-label={minimized ? "Expand chat" : "Minimize chat"} onClick={() => setMinimized((v) => !v)}>
+                  <Minimize2 className="w-4 h-4" />
+                </Button>
+                <Button variant="ghost" size="icon" aria-label="Close chat" onClick={() => setOpen(false)}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           </DrawerHeader>
 
-          <div className="h-[60vh] sm:h-[70vh] flex flex-col">
+          <div className="flex flex-col" style={{ height: minimized ? "36vh" : "70vh" }}>
             {/* Messages */}
             <ScrollArea className="flex-1 p-4">
               <div className="space-y-3">
