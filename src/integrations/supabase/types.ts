@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      analyses: {
+        Row: {
+          content_json: Json
+          created_at: string
+          framework: string
+          id: string
+          linked_goal_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content_json?: Json
+          created_at?: string
+          framework: string
+          id?: string
+          linked_goal_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content_json?: Json
+          created_at?: string
+          framework?: string
+          id?: string
+          linked_goal_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       goals: {
         Row: {
           created_at: string
@@ -50,6 +80,33 @@ export type Database = {
           updated_at?: string
           user_id?: string
           why?: string | null
+        }
+        Relationships: []
+      }
+      ideas: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          linked_goal_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          linked_goal_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          linked_goal_id?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -106,15 +163,171 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          created_at: string
+          gesture_type: string | null
+          id: string
+          onboarded_at: string | null
+          role: string
+          theme: Json | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          gesture_type?: string | null
+          id: string
+          onboarded_at?: string | null
+          role?: string
+          theme?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          gesture_type?: string | null
+          id?: string
+          onboarded_at?: string | null
+          role?: string
+          theme?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sleep_sessions: {
+        Row: {
+          ambience_sound_id: string | null
+          completed: boolean
+          created_at: string
+          end_at: string | null
+          id: string
+          start_at: string
+          track_id: string | null
+          track_type: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ambience_sound_id?: string | null
+          completed?: boolean
+          created_at?: string
+          end_at?: string | null
+          id?: string
+          start_at?: string
+          track_id?: string | null
+          track_type?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ambience_sound_id?: string | null
+          completed?: boolean
+          created_at?: string
+          end_at?: string | null
+          id?: string
+          start_at?: string
+          track_id?: string | null
+          track_type?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sleep_sessions_ambience_sound_id_fkey"
+            columns: ["ambience_sound_id"]
+            isOneToOne: false
+            referencedRelation: "sounds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sleep_sessions_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "tracks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sounds: {
+        Row: {
+          audio_url: string
+          category: string | null
+          created_at: string
+          id: string
+          loop_end_ms: number | null
+          loop_start_ms: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          audio_url: string
+          category?: string | null
+          created_at?: string
+          id?: string
+          loop_end_ms?: number | null
+          loop_start_ms?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          audio_url?: string
+          category?: string | null
+          created_at?: string
+          id?: string
+          loop_end_ms?: number | null
+          loop_start_ms?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tracks: {
+        Row: {
+          audio_url: string
+          created_at: string
+          description: string | null
+          downloadable: boolean
+          duration_seconds: number | null
+          id: string
+          kind: Database["public"]["Enums"]["track_kind"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          audio_url: string
+          created_at?: string
+          description?: string | null
+          downloadable?: boolean
+          duration_seconds?: number | null
+          id?: string
+          kind: Database["public"]["Enums"]["track_kind"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          audio_url?: string
+          created_at?: string
+          description?: string | null
+          downloadable?: boolean
+          duration_seconds?: number | null
+          id?: string
+          kind?: Database["public"]["Enums"]["track_kind"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: {
+        Args: { uid: string }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      track_kind: "install" | "maintain" | "nap" | "anchor" | "morning"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -241,6 +454,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      track_kind: ["install", "maintain", "nap", "anchor", "morning"],
+    },
   },
 } as const

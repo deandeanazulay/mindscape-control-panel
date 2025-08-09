@@ -5,8 +5,8 @@ import { AuthMenu } from "@/components/auth/AuthMenu";
 import GoalForm from "@/components/goals/GoalForm";
 import GoalsList from "@/components/goals/GoalsList";
 import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
-
-
+import LiveFocusView from "@/components/live/LiveFocusView";
+import { FloatingAssistant } from "@/components/live/FloatingAssistant";
 
 type PanelKey = "live" | "archive" | "control" | "create" | "analyze";
 
@@ -90,30 +90,12 @@ function PanelHeader({ title, subtitle }: { title: string; subtitle: string }) {
 }
 
 function LivePanel() {
+  // Render the new Live Focus experience
   return (
     <section className="w-full h-full flex flex-col">
-      <PanelHeader title="Live" subtitle="Capture a moment with state tags and link to goals" />
-      <main className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-4 p-6">
-        <div className="glass-panel rounded-xl p-4 flex flex-col gap-3 smooth">
-          <div className="rounded-lg h-56 bg-muted/30 grid place-items-center">
-            <span className="text-sm text-muted-foreground">Camera preview / Upload coming soon</span>
-          </div>
-          <div className="flex gap-3 justify-center">
-            <Button onClick={()=> toast({ title: "Photo", description: "Camera access will be enabled on mobile builds." })}>Photo</Button>
-            <Button variant="secondary" onClick={()=> toast({ title: "Video", description: "Video capture coming soon." })}>Video</Button>
-            <Button variant="outline" onClick={()=> toast({ title: "Text", description: "Quick note captured." })}>Text</Button>
-            <Button variant="ghost" onClick={()=> toast({ title: "Audio", description: "Audio capture coming soon." })}>Audio</Button>
-          </div>
-          <div className="flex flex-wrap gap-2 justify-center">
-            <Button variant="outline">#Focus</Button>
-            <Button variant="outline">#Calm</Button>
-            <Button variant="outline">#Confidence</Button>
-          </div>
-          <div className="flex justify-center">
-            <Button variant="secondary" onClick={()=> toast({ title: "Link", description: "Link to a goal (Supabase to be connected)." })}>Link to Goal</Button>
-          </div>
-        </div>
-      </main>
+      <LiveFocusView />
+      {/* Floating assistant available on this screen */}
+      <FloatingAssistant task={null as any} onUpdated={() => { /* no-op, wired inside card */ }} />
     </section>
   );
 }
@@ -273,6 +255,7 @@ function OverlayArrows({
     </div>
   );
 }
+
 const Index = () => {
   const { pos, onPointerDown, onPointerUp, current, lastMove, moveLeft, moveRight, moveUp, moveDown } = useSwipeNavigation();
 
