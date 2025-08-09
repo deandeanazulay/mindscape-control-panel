@@ -73,7 +73,7 @@ export default function BrowserShell() {
   ], []);
 
   return (
-    <div className="w-full h-full flex flex-col" style={{ paddingBottom: "var(--hud-height)" }}>
+    <div className="w-full h-full flex flex-col" style={{ paddingBottom: "calc(var(--hud-h, 112px) + var(--hud-gap, 8px) + env(safe-area-inset-bottom))" }}>
       {/* Header */}
       <header className="glass-panel elev rounded-b-xl px-3 md:px-4 py-2 sticky top-0 z-30">
         <div className="flex items-center gap-2 md:gap-3">

@@ -19,7 +19,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<MindWorldDashboard />} />
+          <Route path="/" element={<BrowserShell />} />
           <Route path="/world" element={<MindWorldDashboard />} />
           <Route path="/home" element={<Index />} />
           <Route path="/auth" element={<AuthPage />} />

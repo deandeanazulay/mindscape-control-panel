@@ -29,7 +29,7 @@ export function GameHUD() {
       <div style={{ height: "var(--hud-gap)" }} />
 
       {/* HUD panel */}
-      <div className="mx-auto max-w-6xl px-3">
+      <div className="px-3">
         <div className="relative hud-glass p-3 md:p-4" style={{ height: "var(--hud-h)" }}>
           <span className="hud-spot" />
 
@@ -49,21 +49,23 @@ export function GameHUD() {
                 </div>
               </div>
 
-              <div className="mt-2 space-y-2">
-                <div className="text-[11px] text-white/60">HP</div>
-                <div className="bar"><i style={{ width: `${stats.hp}%`, background: `hsl(var(--hp))` }} /></div>
-
-                <div className="text-[11px] text-white/60 pt-1">MP</div>
-                <div className="bar"><i style={{ width: `${stats.mp}%`, background: `hsl(var(--mp))` }} /></div>
-
-                <div className="text-[11px] text-white/60 pt-1">XP</div>
-                <div className="bar"><i style={{ width: `${stats.xp}%`, background: `hsl(var(--xp))` }} /></div>
-              </div>
             </div>
 
-            {/* Middle: quick actions */}
-            <div className="flex items-end md:items-center justify-center">
-              <div className="grid grid-cols-6 gap-3 w-full md:max-w-none">
+            {/* Middle: metrics HP/MP/XP */}
+            <div className="flex flex-col justify-center space-y-2">
+              <div className="text-[11px] text-white/60">HP</div>
+              <div className="bar"><i style={{ width: `${stats.hp}%`, background: `hsl(var(--hp))` }} /></div>
+
+              <div className="text-[11px] text-white/60 pt-1">MP</div>
+              <div className="bar"><i style={{ width: `${stats.mp}%`, background: `hsl(var(--mp))` }} /></div>
+
+              <div className="text-[11px] text-white/60 pt-1">XP</div>
+              <div className="bar"><i style={{ width: `${stats.xp}%`, background: `hsl(var(--xp))` }} /></div>
+            </div>
+
+            {/* Right: quick actions */}
+            <div className="flex items-end md:items-center justify-end">
+              <div className="grid grid-cols-6 gap-3 w-full md:w-auto">
                 {quickSlots.map((a) => (
                   <button
                     key={a.id}
@@ -88,14 +90,6 @@ export function GameHUD() {
                 ))}
               </div>
             </div>
-
-            {/* Right: controls */}
-            <div className="flex items-start md:items-center justify-end gap-2">
-              <HUDIcon label="Inventory" />
-              <HUDIcon label="Map" onClick={() => run('openMap' as any)} />
-              <HUDIcon label="Chat" />
-              <HUDIcon label="Aurora" glow />
-            </div>
           </div>
         </div>
       </div>
@@ -103,12 +97,3 @@ export function GameHUD() {
   );
 }
 
-function HUDIcon({ label, glow, onClick }: { label: string; glow?: boolean; onClick?: () => void }) {
-  return (
-    <button onClick={onClick} className="relative h-10 w-10 rounded-xl hud-glass grid place-items-center text-white/90 hover:scale-[1.03] active:scale-95 transition">
-      {glow && <span className="absolute inset-0 rounded-xl ring-2 ring-sky-400/50 animate-pulse" />}
-      <span className="text-[14px]">·</span>
-      <span className="sr-only">{label}</span>
-    </button>
-  );
-}
