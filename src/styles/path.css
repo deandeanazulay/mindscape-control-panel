@@ -1,0 +1,121 @@
+:root {
+  --path-bg: 220 15% 8%;
+  --node-core: 0 84% 55%;
+  --node-core-dark: 0 84% 40%;
+  --node-ring: 0 100% 70%;
+  --hud-chip: 220 15% 18%;
+  --glass: 0 0% 100% / 0.06;
+}
+
+/* glossy red orb */
+.node-gloss {
+  background:
+    radial-gradient(60% 60% at 30% 28%, rgba(255,255,255,.65), rgba(255,255,255,0) 50%),
+    radial-gradient(100% 100% at 50% 120%, rgba(0,0,0,.35), rgba(0,0,0,0) 60%),
+    linear-gradient(to bottom, hsl(var(--node-core)), hsl(var(--node-core-dark)));
+  box-shadow:
+    inset 0 8px 10px rgba(255,255,255,.15),
+    inset 0 -10px 18px rgba(0,0,0,.25),
+    0 18px 35px rgba(0,0,0,.45);
+  position: relative;
+}
+
+/* ring depth */
+.node-ring-shadow {
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.25),
+    0 8px 18px rgba(255,60,60,.25);
+}
+
+/* active pulse */
+@keyframes nodePulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+.node-pulse { animation: nodePulse 2.4s ease-in-out infinite; }
+
+/* tiny stars */
+.tiny-star {
+  width: 10px; height: 10px; display:inline-block;
+  background: conic-gradient(from 0deg, #fff 0 20%, transparent 0),
+              conic-gradient(from 72deg, #fff 0 20%, transparent 0),
+              conic-gradient(from 144deg, #fff 0 20%, transparent 0);
+  -webkit-mask: radial-gradient(circle at 50% 63%, black 8px, transparent 9px)
+                radial-gradient(circle, black 6.8px, transparent 7px);
+  filter: drop-shadow(0 1px 2px rgba(255,255,255,.2));
+}
+
+/* CSS icons (no SVG) */
+.css-star {
+  width: 36px; height: 36px;
+  background:
+    conic-gradient(from -18deg, #fff 0 10%, transparent 0 20%, #fff 0 30%, transparent 0 40%, #fff 0 50%, transparent 0 60%, #fff 0 70%, transparent 0 80%, #fff 0 90%, transparent 0);
+  -webkit-mask: radial-gradient( circle at 50% 55%, black 55%, transparent 56%);
+  filter: drop-shadow(0 2px 0 rgba(0,0,0,.2));
+}
+
+.css-headphones {
+  position: relative; width: 36px; height: 36px;
+}
+.css-headphones::before,
+.css-headphones::after{
+  content:''; position:absolute; inset:0; margin:auto;
+  width:32px;height:18px;border:6px solid #fff;border-bottom:none;border-radius:20px 20px 0 0;
+}
+.css-headphones::after{
+  width:8px;height:16px;left:4px;top:10px;border:0;background:#fff;border-radius:6px;box-shadow:20px 0 0 #fff;
+}
+
+.css-book {
+  width: 36px; height: 28px; position: relative;
+  background: linear-gradient(#fff,#eee);
+  border-radius: 4px; box-shadow: inset 0 0 0 2px rgba(0,0,0,.1);
+}
+.css-book::before{
+  content:''; position:absolute; left:50%; top:0; bottom:0; width:2px; background:rgba(0,0,0,.15);
+}
+.css-crown {
+  width: 36px; height: 26px; position: relative;
+  background: linear-gradient(#ffd44d,#ffb800);
+  clip-path: polygon(0% 100%, 0% 55%, 20% 35%, 33% 55%, 50% 30%, 67% 55%, 80% 35%, 100% 55%, 100% 100%);
+  box-shadow: 0 2px 0 rgba(0,0,0,.25), inset 0 2px 6px rgba(255,255,255,.4);
+}
+
+/* Avatar (simple CSS) */
+.avatar-blob { width: 74px; height: 90px; }
+.av-head {
+  width: 54px; height: 54px; border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #ffd9a8, #ffbb77 70%);
+  box-shadow: 0 6px 0 rgba(0,0,0,.25); margin: 0 auto;
+}
+.av-body {
+  width: 62px; height: 32px; margin: -8px auto 0; border-radius: 20px;
+  background: linear-gradient(#4fb0ff,#1da1f2);
+  box-shadow: 0 8px 18px rgba(0,0,0,.35);
+}
+.av-ball {
+  position:absolute; right:-6px; top:4px; width:18px; height:18px; border-radius:50%;
+  background: radial-gradient(circle at 30% 30%, #ffefaa, #ffa200);
+  box-shadow: inset 0 -4px 8px rgba(0,0,0,.25), 0 3px 0 rgba(0,0,0,.2);
+}
+
+/* Bottom nav icons — examples */
+.css-icon-home, .css-icon-map, .css-icon-live, .css-icon-rank, .css-icon-aurora {
+  width: 26px; height: 26px; display:block;
+  filter: drop-shadow(0 2px 0 rgba(0,0,0,.25));
+}
+.css-icon-home { background:
+  radial-gradient(circle at 50% 35%, #fff 55%, transparent 56%),
+  conic-gradient(from 45deg, transparent 0 25%, #fff 0 75%, transparent 0); }
+.css-icon-map { background:
+  radial-gradient(circle at 50% 50%, #fff 10%, transparent 11%) ,
+  radial-gradient(circle at 75% 70%, #fff 10%, transparent 11%),
+  radial-gradient(circle at 25% 30%, #fff 10%, transparent 11%); }
+.css-icon-live { background: radial-gradient(circle,#fff 60%,transparent 61%); box-shadow: inset 0 0 0 4px #fff; border-radius:50%; }
+.css-icon-rank { background:
+  linear-gradient(#ffd44d,#ffb800); clip-path: polygon(50% 0, 62% 35%, 100% 35%, 69% 57%, 82% 100%, 50% 75%, 18% 100%, 31% 57%, 0 35%, 38% 35%); }
+.css-icon-aurora { background:
+  radial-gradient(circle at 30% 30%, #9be7ff 20%, transparent 21%),
+  radial-gradient(circle at 70% 30%, #b48bff 20%, transparent 21%),
+  radial-gradient(circle at 50% 70%, #1da1f2 20%, transparent 21%); }
