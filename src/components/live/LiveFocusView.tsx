@@ -1,5 +1,5 @@
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -9,6 +9,7 @@ import { QuickActionsBar } from "./QuickActionsBar";
 import { ProgressBar } from "./ProgressBar";
 import { MoodCheck } from "./MoodCheck";
 import { FloatingAssistant } from "@/components/live/FloatingAssistant";
+import { useRoadmapProgress } from "@/hooks/useRoadmapProgress";
 
 type Roadmap = {
   id: string;
@@ -34,13 +35,7 @@ export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?:
   const [roadmaps, setRoadmaps] = useState<Roadmap[]>([]);
   const [task, setTask] = useState<Task | null>(null);
   const [loading, setLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
-
-  const dateStart = useMemo(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d.toISOString();
-  }, []);
+  const { percent, refresh: refreshProgress } = useRoadmapProgress(user?.id ?? null, activeRoadmap?.id ?? null);
 
   // Load roadmaps, active roadmap, and focused task
   useEffect(() => {
@@ -122,30 +117,13 @@ export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?:
         setLoading(false);
       }
 
-      // Progress: % done today for the active roadmap
-      if (active) {
-        const { data: tAll, error: pErr } = await supabase
-          .from("tasks")
-          .select("id, status, completed_at")
-          .eq("user_id", user.id)
-          .eq("roadmap_id", active.id);
-        if (pErr) {
-          console.error(pErr);
-        } else {
-          const arr = tAll ?? [];
-          const total = arr.length || 1;
-          const doneToday = arr.filter((t: any) => t.status === "done" && t.completed_at && t.completed_at >= dateStart).length;
-          setProgress(Math.round((doneToday / total) * 100));
-        }
-      } else {
-        setProgress(0);
-      }
+      // Progress handled by useRoadmapProgress hook
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [user, initializing, dateStart]);
+  }, [user, initializing]);
 
   const switchActive = async (roadmapId: string) => {
     if (!user) {
@@ -249,12 +227,12 @@ export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?:
         <CurrentFocusCard
           activeRoadmap={activeRoadmap}
           task={task}
-          onAdvance={(next) => setTask(next)}
+          onAdvance={(next) => { setTask(next); refreshProgress(); }}
         />
 
         <QuickActionsBar currentTask={task} />
 
-        <ProgressBar percent={progress} />
+        <ProgressBar percent={percent} />
 
         <MoodCheck />
       </main>
