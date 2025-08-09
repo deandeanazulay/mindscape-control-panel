@@ -1,8 +1,10 @@
+
 import { PropsWithChildren } from "react";
 import RoadmapsManager from "@/components/control/RoadmapsManager";
 import ArchivePanel from "@/components/archive/ArchivePanel";
 import { MoodCarousel } from "@/components/live/MoodCarousel";
 import QuestBoard from "./QuestBoard";
+import HypnosisLauncher from "@/components/hypnosis/HypnosisLauncher";
 
 export type OverlayId = "mentor" | "library" | "garden" | "focus" | "analyze";
 
@@ -57,8 +59,11 @@ export default function WorldOverlayRouter({ id, onClose }: { id: OverlayId | nu
   if (id === "mentor") {
     return (
       <OverlayShell title="Mentor" onClose={onClose}>
-        <div className="max-w-xl mx-auto">
-          <QuestBoard />
+        <div className="max-w-xl mx-auto grid gap-4">
+          <HypnosisLauncher />
+          <div>
+            <QuestBoard />
+          </div>
         </div>
       </OverlayShell>
     );
