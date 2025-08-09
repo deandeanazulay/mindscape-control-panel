@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { useGameStore } from "@/game/store";
 import { quickSlots } from "@/game/hud/hud.data";
 import { useHUDActions } from "@/game/hud/useHUDActions";
+import { EvolvingSphere } from "@/components/effects/EvolvingSphere";
 
 export function GameHUD() {
   const stats = useGameStore((s) => s.stats);
@@ -37,7 +38,7 @@ export function GameHUD() {
             {/* Left: identity + bars */}
             <div className="flex flex-col justify-between">
               <div className="flex items-center gap-3">
-                <div className="relative h-10 w-10 rounded-full bg-gradient-to-br from-sky-400 to-sky-600" />
+                <EvolvingSphere size={44} level={stats.level} xpPct={stats.xp} mood="focused" />
                 <div className="min-w-0">
                   <div className="text-[13px] text-white/70">
                     Lv. {stats.level} · Streak {stats.streak} 🔥 · Mind Wizard
