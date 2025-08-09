@@ -2,11 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { AuthMenu } from "@/components/auth/AuthMenu";
-import GoalForm from "@/components/goals/GoalForm";
-import GoalsList from "@/components/goals/GoalsList";
+import RoadmapsManager from "@/components/control/RoadmapsManager";
 import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import LiveFocusView from "@/components/live/LiveFocusView";
-import { FloatingAssistant } from "@/components/live/FloatingAssistant";
 
 type PanelKey = "live" | "archive" | "control" | "create" | "analyze";
 
@@ -94,8 +92,6 @@ function LivePanel() {
   return (
     <section className="w-full h-full flex flex-col">
       <LiveFocusView />
-      {/* Floating assistant available on this screen */}
-      <FloatingAssistant task={null as any} onUpdated={() => { /* no-op, wired inside card */ }} />
     </section>
   );
 }
@@ -123,14 +119,9 @@ function ArchivePanel() {
 function ControlPanel() {
   return (
     <section className="w-full h-full flex flex-col">
-      <PanelHeader title="Control" subtitle="Manage goals with clarity" />
-      <main className="flex-1 min-h-0 overflow-y-auto p-6 max-w-xl mx-auto w-full">
-        <div className="glass-panel rounded-xl p-5 elev grid gap-6">
-          <GoalForm />
-          <div className="pt-2 border-t border-border">
-            <GoalsList />
-          </div>
-        </div>
+      <PanelHeader title="Control" subtitle="Manage roadmaps and tasks" />
+      <main className="flex-1 min-h-0 overflow-y-auto p-6 max-w-3xl mx-auto w-full">
+        <RoadmapsManager />
       </main>
     </section>
   );

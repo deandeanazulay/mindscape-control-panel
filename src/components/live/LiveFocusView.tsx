@@ -8,6 +8,7 @@ import { CurrentFocusCard } from "./CurrentFocusCard";
 import { QuickActionsBar } from "./QuickActionsBar";
 import { ProgressBar } from "./ProgressBar";
 import { MoodCheck } from "./MoodCheck";
+import { FloatingAssistant } from "@/components/live/FloatingAssistant";
 
 type Roadmap = {
   id: string;
@@ -254,6 +255,11 @@ export default function LiveFocusView() {
 
         <MoodCheck />
       </main>
+      {/* Floating assistant is global on this screen */}
+      <FloatingAssistant
+        task={task}
+        onUpdated={(desc) => setTask((prev) => (prev ? { ...prev, description: desc } : prev))}
+      />
     </section>
   );
 }
