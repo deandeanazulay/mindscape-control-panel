@@ -1,15 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import RoadmapForm from "./RoadmapForm";
 import RoadmapsList, { RoadmapItem } from "./RoadmapsList";
 import TasksManager from "./TasksManager";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { ProgressBar } from "@/components/live/ProgressBar";
+import { useRoadmapProgress } from "@/hooks/useRoadmapProgress";
 
 export default function RoadmapsManager() {
   const { user } = useSupabaseAuth();
   const [items, setItems] = useState<RoadmapItem[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
+  const [newOpen, setNewOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const fetchRoadmaps = async () => {
     if (!user) { setItems([]); return; }
@@ -22,10 +31,8 @@ export default function RoadmapsManager() {
     if (error) { console.error(error); return; }
     const list = (data ?? []) as any[] as RoadmapItem[];
     setItems(list);
-    if (!selectedId) {
-      const active = list.find(r=> r.status === 'active');
-      setSelectedId(active?.id ?? list[0]?.id ?? null);
-    }
+    const active = list.find(r=> r.status === 'active');
+    if (active) setSelectedId(active.id); else setSelectedId(list[0]?.id ?? null);
   };
 
   useEffect(()=> { fetchRoadmaps(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [user]);
@@ -41,7 +48,7 @@ export default function RoadmapsManager() {
     if (actErr) { console.error(actErr); toast({ title: "Error", description: "Could not activate roadmap." }); return; }
     toast({ title: "Activated", description: "Roadmap set as live." });
 
-    // Fetch next task and update current_focus
+    // Set the next TODO as current_focus
     const { data: next, error: nextErr } = await supabase
       .from("tasks").select("id").eq("user_id", user.id).eq("roadmap_id", roadmapId)
       .eq("status", "todo")
@@ -53,6 +60,7 @@ export default function RoadmapsManager() {
     const nextTask = next?.[0] as any | undefined;
     await supabase.from("current_focus").upsert({ user_id: user.id, task_id: nextTask ? nextTask.id : null, started_at: new Date().toISOString() });
 
+    setSelectedId(roadmapId);
     await fetchRoadmaps();
   };
 
@@ -73,22 +81,122 @@ export default function RoadmapsManager() {
     await fetchRoadmaps();
   };
 
-  return (
-    <div className="glass-panel rounded-xl p-5 elev grid gap-6">
-      <RoadmapForm onCreated={fetchRoadmaps} />
-      <div className="pt-2 border-t border-border">
-        <RoadmapsList
-          items={items}
-          selectedId={selectedId}
-          onSelect={setSelectedId}
-          onSetActive={setActive}
-          onRename={rename}
-          onDelete={remove}
-        />
+  const { percent } = useRoadmapProgress(user?.id ?? null, selectedId);
+
+  // Empty state
+  if (items.length === 0) {
+    const Creator = (
+      isMobile ? (
+        <Drawer open={newOpen} onOpenChange={setNewOpen}>
+          <DrawerTrigger asChild>
+            <Button>New Roadmap</Button>
+          </DrawerTrigger>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>Create roadmap</DrawerTitle>
+            </DrawerHeader>
+            <div className="p-4">
+              <RoadmapForm onCreated={async (id) => { setNewOpen(false); await setActive(id); }} />
+            </div>
+          </DrawerContent>
+        </Drawer>
+      ) : (
+        <Dialog open={newOpen} onOpenChange={setNewOpen}>
+          <DialogTrigger asChild>
+            <Button>New Roadmap</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Create roadmap</DialogTitle>
+            </DialogHeader>
+            <RoadmapForm onCreated={async (id) => { setNewOpen(false); await setActive(id); }} />
+          </DialogContent>
+        </Dialog>
+      )
+    );
+
+    return (
+      <div className="glass-panel rounded-xl p-6 elev grid place-items-center min-h-[40vh]">
+        <div className="text-center max-w-sm">
+          <div className="text-sm text-muted-foreground mb-3">Create your first roadmap</div>
+          {Creator}
+        </div>
       </div>
+    );
+  }
+
+  const CreatorControl = (
+    isMobile ? (
+      <Drawer open={newOpen} onOpenChange={setNewOpen}>
+        <DrawerTrigger asChild>
+          <Button size="sm">New</Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Create roadmap</DrawerTitle>
+          </DrawerHeader>
+          <div className="p-4">
+            <RoadmapForm onCreated={async (id) => { setNewOpen(false); await setActive(id); }} />
+          </div>
+        </DrawerContent>
+      </Drawer>
+    ) : (
+      <Dialog open={newOpen} onOpenChange={setNewOpen}>
+        <DialogTrigger asChild>
+          <Button size="sm">New</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Create roadmap</DialogTitle>
+          </DialogHeader>
+          <RoadmapForm onCreated={async (id) => { setNewOpen(false); await setActive(id); }} />
+        </DialogContent>
+      </Dialog>
+    )
+  );
+
+  return (
+    <div className="grid gap-5">
+      {/* Header: Active roadmap selector */}
+      <div className="glass-panel rounded-xl p-4 elev flex items-center justify-between gap-3">
+        <div className="text-xs text-muted-foreground">Active roadmap</div>
+        <div className="flex-1 min-w-0">
+          <select
+            aria-label="Select active roadmap"
+            className="w-full bg-background border border-border rounded px-3 py-2 text-sm"
+            value={selectedId ?? ''}
+            onChange={(e)=> setActive(e.target.value)}
+          >
+            {items.map((r)=> (
+              <option key={r.id} value={r.id}>{r.title}</option>
+            ))}
+          </select>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="outline" onClick={()=> setShowAll((v)=> !v)}>Manage</Button>
+          {CreatorControl}
+        </div>
+      </div>
+
+      {/* Optional: all roadmaps */}
+      {showAll && (
+        <div className="rounded-xl border border-border p-3">
+          <RoadmapsList
+            items={items}
+            selectedId={selectedId}
+            onSelect={(id)=> setSelectedId(id)}
+            onSetActive={setActive}
+            onRename={rename}
+            onDelete={remove}
+          />
+        </div>
+      )}
+
+      {/* Tasks for selected (active) roadmap */}
       {selectedId && (
-        <div className="pt-2 border-t border-border">
+        <div className="grid gap-3">
           <TasksManager roadmapId={selectedId} />
+          <ProgressBar percent={percent} />
         </div>
       )}
     </div>

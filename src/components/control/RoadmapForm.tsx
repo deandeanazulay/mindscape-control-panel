@@ -6,7 +6,7 @@ import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
-export default function RoadmapForm({ onCreated }: { onCreated?: () => void }) {
+export default function RoadmapForm({ onCreated }: { onCreated?: (id: string) => void }) {
   const { user } = useSupabaseAuth();
   const [title, setTitle] = useState("");
   const [color, setColor] = useState("");
@@ -20,13 +20,17 @@ export default function RoadmapForm({ onCreated }: { onCreated?: () => void }) {
     }
     if (!title.trim()) return;
     setBusy(true);
-    const { error } = await supabase.from("roadmaps").insert({
-      user_id: user.id,
-      title: title.trim(),
-      color: color.trim() || null,
-      description: description.trim() || null,
-      status: "paused",
-    });
+    const { data, error } = await supabase
+      .from("roadmaps")
+      .insert({
+        user_id: user.id,
+        title: title.trim(),
+        color: color.trim() || null,
+        description: description.trim() || null,
+        status: "paused",
+      })
+      .select("id")
+      .single();
     setBusy(false);
     if (error) {
       console.error(error);
@@ -35,7 +39,7 @@ export default function RoadmapForm({ onCreated }: { onCreated?: () => void }) {
     }
     toast({ title: "Roadmap created", description: "Add tasks and set it active when ready." });
     setTitle(""); setColor(""); setDescription("");
-    onCreated?.();
+    onCreated?.(data!.id as string);
   };
 
   return (

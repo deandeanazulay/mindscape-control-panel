@@ -26,6 +26,7 @@ export default function TasksManager({ roadmapId }: { roadmapId: string }) {
   const [description, setDescription] = useState("");
   const [due, setDue] = useState<string>("");
   const busy = useMemo(()=> loading, [loading]);
+  const [showComposer, setShowComposer] = useState(false);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState<string>("");
@@ -153,15 +154,20 @@ export default function TasksManager({ roadmapId }: { roadmapId: string }) {
 
   return (
     <div className="grid gap-4">
-      <div className="text-sm font-medium">Tasks</div>
-      <div className="grid gap-2 sm:grid-cols-2">
-        <Input placeholder="New task title" value={title} onChange={(e)=> setTitle(e.target.value)} />
-        <Input type="datetime-local" value={due} onChange={(e)=> setDue(e.target.value)} />
-      </div>
-      <Textarea placeholder="Description (optional)" value={description} onChange={(e)=> setDescription(e.target.value)} />
-      <div className="flex justify-end">
-        <Button onClick={addTask} disabled={!title.trim() || busy}>{busy ? "Saving..." : "Add Task"}</Button>
-      </div>
+      {/* Inline composer (collapsed by default) */}
+      {showComposer && (
+        <div className="rounded-lg border border-border p-3 grid gap-2">
+          <div className="grid gap-2 sm:grid-cols-2">
+            <Input placeholder="Task title" value={title} onChange={(e)=> setTitle(e.target.value)} className="h-10" />
+            <Input type="datetime-local" value={due} onChange={(e)=> setDue(e.target.value)} className="h-10" />
+          </div>
+          <Textarea placeholder="Description (optional)" value={description} onChange={(e)=> setDescription(e.target.value)} />
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={()=> { setShowComposer(false); setTitle(""); setDescription(""); setDue(""); }}>Cancel</Button>
+            <Button onClick={async ()=> { await addTask(); setShowComposer(false); }}>Add</Button>
+          </div>
+        </div>
+      )}
 
       <div className="grid gap-2">
         {tasks.length === 0 && <div className="text-sm text-muted-foreground">No tasks yet.</div>}
