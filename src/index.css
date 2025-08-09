@@ -273,3 +273,18 @@ All colors MUST be HSL.
 .hub-scene.tired { --primary: 260 14% 46%; --accent: 260 14% 46%; }
 .hub-scene.stressed { --primary: 0 74% 60%; --accent: 0 74% 60%; }
 
+/* Side-scroll world */
+.world-viewport { position: relative; width: 100%; height: 100%; overflow: hidden; }
+.world-canvas { position: absolute; inset: 0; }
+.world-track { position: absolute; left:0; top:0; height:100%; will-change: transform; }
+.world-ground { position: absolute; left:0; right:0; bottom:12%; height: 4px; background: hsl(var(--border)); box-shadow: 0 2px 0 hsl(var(--muted)); }
+.building { position: absolute; bottom: 12%; width: 220px; height: 140px; border: 1px solid hsl(var(--border)); background: linear-gradient(180deg, hsl(var(--secondary) / 0.8), hsl(var(--secondary))); border-radius: 14px; box-shadow: var(--shadow-soft); }
+.building .label { position:absolute; top:-28px; left:50%; transform: translateX(-50%); font-size: 12px; color: hsl(var(--muted-foreground)); background: hsl(var(--background) / 0.6); padding: 2px 8px; border-radius: 999px; border: 1px solid hsl(var(--border)); backdrop-filter: blur(6px); }
+.door { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 48px; height: 70px; border-radius: 8px 8px 0 0; background: hsl(var(--background)); border: 2px solid hsl(var(--border)); box-shadow: inset 0 0 10px hsl(var(--accent) / 0.1); }
+.door.glow { box-shadow: 0 0 0 0 hsl(var(--accent) / 0.0), 0 0 24px 6px hsl(var(--accent) / 0.45); border-color: hsl(var(--accent)); }
+.npc { position: absolute; bottom: 12%; width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(180deg, hsl(var(--primary) / 0.4), hsl(var(--primary) / 0.2)); border: 1px solid hsl(var(--border)); display: grid; place-items: center; }
+.hint { position: absolute; bottom: calc(12% + 150px); left:50%; transform: translateX(-50%); font-size: 12px; color: hsl(var(--foreground)); background: hsl(var(--background) / 0.7); padding: 6px 10px; border-radius: 10px; border: 1px solid hsl(var(--border)); white-space: nowrap; }
+.player { position: absolute; bottom: calc(12% + 70px); width: 80px; height: 80px; }
+.parallax-foreground { position:absolute; inset:0; pointer-events:none; background-image: radial-gradient(6px 6px at 10% 90%, hsl(var(--accent) / 0.15), transparent 60%), radial-gradient(6px 6px at 90% 88%, hsl(var(--primary) / 0.15), transparent 60%); background-size: 200px 200px; opacity: 0.4; }
+.controls-safe { padding-bottom: calc(env(safe-area-inset-bottom) + 16px); }
+
