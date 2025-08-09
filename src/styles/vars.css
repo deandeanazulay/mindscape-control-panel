@@ -1,0 +1,8 @@
+/* Floating metrics for the app: right-side stack */
+:root {
+  --compass-size: 72px;
+  --bubble-size: 56px; /* chat */
+  --fab-size: 56px;    /* new task */
+  --gap: 12px;
+  --compass-bottom: 12px;
+}

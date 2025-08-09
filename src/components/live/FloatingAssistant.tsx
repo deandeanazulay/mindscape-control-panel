@@ -79,7 +79,7 @@ export function FloatingAssistant({ task, onUpdated }: { task: Task | null; onUp
         className="fixed z-40 w-14 h-14 rounded-full glass-panel elev grid place-items-center hover-scale smooth"
         style={{
           right: 'calc(env(safe-area-inset-right) + 12px)',
-          bottom: 'calc(env(safe-area-inset-bottom) + 12px)'
+          bottom: 'calc(env(safe-area-inset-bottom) + var(--compass-bottom, 12px) + var(--compass-size, 72px) + var(--gap, 12px))'
         }}
       >
         <MessageSquare className="w-6 h-6" />

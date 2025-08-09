@@ -292,8 +292,8 @@ function CompassIndicator({
       style={{
         width: 72,
         height: 72,
-        right: `calc(env(safe-area-inset-right) + var(--compass-right, 112px))`,
-        bottom: `calc(env(safe-area-inset-bottom) + 16px)` as unknown as number,
+        right: `calc(env(safe-area-inset-right) + 12px)`,
+        bottom: `calc(env(safe-area-inset-bottom) + var(--compass-bottom, 12px))` as unknown as number,
       }}
     >
       {/* center */}

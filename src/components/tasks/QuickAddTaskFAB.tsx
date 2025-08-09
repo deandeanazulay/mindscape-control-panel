@@ -90,7 +90,7 @@ export default function QuickAddTaskFAB({ roadmapId, onCreated }: Props) {
         }}
         className="fixed z-50 right-4 rounded-full glass-panel elev smooth hover-scale focus:outline-none focus:ring-2 focus:ring-ring"
         style={{
-          bottom: `calc(env(safe-area-inset-bottom) + var(--fab-bottom, 96px))`,
+          bottom: `calc(env(safe-area-inset-bottom) + var(--compass-bottom, 12px) + var(--compass-size, 72px) + var(--gap, 12px) + var(--bubble-size, 56px) + var(--gap, 12px))`,
           width: 56,
           height: 56,
         }}
