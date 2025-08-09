@@ -5,6 +5,7 @@ import RoadmapsManager from "@/components/control/RoadmapsManager";
 import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import LiveFocusView from "@/components/live/LiveFocusView";
 import ArchivePanel from "@/components/archive/ArchivePanel";
+import { FloatingAssistant } from "@/components/live/FloatingAssistant";
 
 
 import AppHeader from "@/components/layout/AppHeader";
@@ -267,7 +268,7 @@ function CompassIndicator({
 
   return (
     <div className="fixed left-1/2 -translate-x-1/2 bottom-16 z-40">
-      <div className="grid grid-cols-3 grid-rows-3 gap-2 p-2 glass-panel rounded-2xl elev">
+      <div className="grid grid-cols-3 grid-rows-3 gap-1 p-1 glass-panel rounded-xl elev">
         {/* row 1 */}
         <div />
         {canUp ? (
@@ -367,6 +368,9 @@ const Index = () => {
       <footer className="absolute bottom-4 left-4 text-xs text-muted-foreground z-10">
         <span>{current.toUpperCase()}</span>
       </footer>
+
+      {/* Global AI assistant */}
+      <FloatingAssistant task={null} onUpdated={() => {}} />
     </div>
   );
 };

@@ -8,7 +8,7 @@ import { CurrentFocusCard } from "./CurrentFocusCard";
 import { QuickActionsBar } from "./QuickActionsBar";
 import { ProgressBar } from "./ProgressBar";
 import { MoodCheck } from "./MoodCheck";
-import { FloatingAssistant } from "@/components/live/FloatingAssistant";
+
 import { useRoadmapProgress } from "@/hooks/useRoadmapProgress";
 import { PanelHeaderUnified } from "@/components/layout/PanelHeaderUnified";
 
@@ -233,11 +233,6 @@ export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?:
 
         <MoodCheck />
       </main>
-      {/* Floating assistant is global on this screen */}
-      <FloatingAssistant
-        task={task}
-        onUpdated={(desc) => setTask((prev) => (prev ? { ...prev, description: desc } : prev))}
-      />
     </section>
   );
 }
