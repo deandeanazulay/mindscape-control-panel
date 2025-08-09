@@ -256,49 +256,54 @@ function CompassIndicator({
   const canUp = nextOccupied(pos[0], pos[1], "up") !== null;
   const canDown = nextOccupied(pos[0], pos[1], "down") !== null;
 
-  const Dot = ({ className = "", ariaLabel, onClick }: { className?: string; ariaLabel?: string; onClick?: () => void }) => (
-    <button
-      type="button"
-      aria-label={ariaLabel}
-      title={ariaLabel}
-      onClick={onClick}
-      className={`w-11 h-11 rounded-full border border-border smooth focus:outline-none focus:ring-2 focus:ring-primary/50 ${className}`}
-    />
-  );
+  const DotBtn = ({
+    onClick,
+    ariaLabel,
+    active,
+    available,
+    style,
+  }: {
+    onClick?: () => void;
+    ariaLabel?: string;
+    active?: boolean;
+    available?: boolean;
+    style: React.CSSProperties;
+  }) => {
+    if (!active && !available) return null; // hide unavailable
+    return (
+      <button
+        type="button"
+        aria-label={ariaLabel}
+        onClick={onClick}
+        className="absolute pointer-events-auto flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-ring rounded-full"
+        style={{ width: 32, height: 32, ...style }}
+      >
+        <span
+          className={`block rounded-full ${active ? 'bg-accent' : 'bg-muted-foreground'} ${available && !active ? 'opacity-60' : 'opacity-100'}`}
+          style={{ width: 8, height: 8 }}
+        />
+      </button>
+    );
+  };
 
+  // container 72x72 at bottom-right, above safe area
   return (
-    <div className="fixed left-1/2 -translate-x-1/2 bottom-16 z-40">
-      <div className="grid grid-cols-3 grid-rows-3 gap-1 p-1 glass-panel rounded-xl elev">
-        {/* row 1 */}
-        <div />
-        {canUp ? (
-          <Dot ariaLabel="Go up" onClick={moveUp} className="bg-accent hover-scale" />
-        ) : (
-          <div className="w-11 h-11" aria-hidden />
-        )}
-        <div />
-        {/* row 2 */}
-        {canLeft ? (
-          <Dot ariaLabel="Go left" onClick={moveLeft} className="bg-accent hover-scale" />
-        ) : (
-          <div className="w-11 h-11" aria-hidden />
-        )}
-        {/* center */}
-        <div className="w-11 h-11 rounded-full bg-primary border border-primary/60" aria-hidden />
-        {canRight ? (
-          <Dot ariaLabel="Go right" onClick={moveRight} className="bg-accent hover-scale" />
-        ) : (
-          <div className="w-11 h-11" aria-hidden />
-        )}
-        {/* row 3 */}
-        <div />
-        {canDown ? (
-          <Dot ariaLabel="Go down" onClick={moveDown} className="bg-accent hover-scale" />
-        ) : (
-          <div className="w-11 h-11" aria-hidden />
-        )}
-        <div />
-      </div>
+    <div
+      className="fixed z-40 pointer-events-none"
+      style={{
+        width: 72,
+        height: 72,
+        right: 16,
+        bottom: `calc(env(safe-area-inset-bottom) + 16px)` as unknown as number,
+      }}
+    >
+      {/* center */}
+      <DotBtn active style={{ left: 20, top: 20 }} ariaLabel="Current panel" />
+      {/* satellites */}
+      <DotBtn available={canUp} onClick={moveUp} ariaLabel="Go up" style={{ left: 20, top: 4 }} />
+      <DotBtn available={canDown} onClick={moveDown} ariaLabel="Go down" style={{ left: 20, top: 36 }} />
+      <DotBtn available={canLeft} onClick={moveLeft} ariaLabel="Go left" style={{ left: 4, top: 20 }} />
+      <DotBtn available={canRight} onClick={moveRight} ariaLabel="Go right" style={{ left: 36, top: 20 }} />
     </div>
   );
 }

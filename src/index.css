@@ -18,8 +18,8 @@ All colors MUST be HSL.
     --popover: 215 10% 10%;
     --popover-foreground: 220 6% 93%;
 
-    /* Neutral accent (no purple) */
-    --primary: 215 7% 45%; /* #6B6F76 */
+    /* Accent (Twitter Blue) applied to primary + accent */
+    --primary: 203 89% 53%; /* #1DA1F2 */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 215 10% 12%;
@@ -28,7 +28,7 @@ All colors MUST be HSL.
     --muted: 215 9% 14%;
     --muted-foreground: 220 6% 66%; /* #A1A1AA */
 
-    --accent: 215 7% 45%; /* same neutral accent */
+    --accent: 203 89% 53%; /* #1DA1F2 */
     --accent-foreground: 220 6% 93%;
 
     --destructive: 0 84% 60%;
@@ -36,7 +36,7 @@ All colors MUST be HSL.
 
     --border: 215 12% 19%; /* #2A2E34 */
     --input: 215 12% 19%;
-    --ring: 214 20% 57%; /* #7F8EA3 */
+    --ring: 203 89% 53%; /* focus ring = accent */
 
     --radius: 0.9rem;
 
@@ -69,19 +69,19 @@ All colors MUST be HSL.
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 215 7% 35%;
+    --primary: 203 89% 53%;
     --primary-foreground: 0 0% 100%;
     --secondary: 210 40% 96%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 215 7% 35%;
+    --accent: 203 89% 53%;
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 214 20% 45%;
+    --ring: 203 89% 53%;
     --glass-bg: 0 0% 100% / 0.55;
     --glass-border: 220 14% 60% / 0.35;
   }
