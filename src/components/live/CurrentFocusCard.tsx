@@ -106,7 +106,7 @@ export function CurrentFocusCard({
   
 
   return (
-    <div className="glass-panel rounded-xl p-5 elev">
+    <div className="glass-panel rounded-xl p-5 elev focus-glow">
       <div className="flex items-center justify-between gap-3">
         <div>
           <div className="text-xs text-muted-foreground">

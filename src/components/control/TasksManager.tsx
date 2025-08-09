@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { toast } from "@/hooks/use-toast";
 
 export type Task = {
@@ -26,7 +27,7 @@ export default function TasksManager({ roadmapId }: { roadmapId: string }) {
   const [description, setDescription] = useState("");
   const [due, setDue] = useState<string>("");
   const busy = useMemo(()=> loading, [loading]);
-  const [showComposer, setShowComposer] = useState(false);
+  const [showComposer, setShowComposer] = useLocalStorage<boolean>(`tasks.composer.${roadmapId}`, false);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState<string>("");
@@ -154,6 +155,12 @@ export default function TasksManager({ roadmapId }: { roadmapId: string }) {
 
   return (
     <div className="grid gap-4">
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-muted-foreground">Tasks</div>
+        <Button variant="soft" onClick={()=> setShowComposer(v=> !v)}>
+          {showComposer ? "Close" : "+ New Task"}
+        </Button>
+      </div>
       {/* Inline composer (collapsed by default) */}
       {showComposer && (
         <div className="rounded-lg border border-border p-3 grid gap-2">
@@ -172,7 +179,7 @@ export default function TasksManager({ roadmapId }: { roadmapId: string }) {
       <div className="grid gap-2">
         {tasks.length === 0 && <div className="text-sm text-muted-foreground">No tasks yet.</div>}
         {tasks.map((t, idx)=> (
-          <div key={t.id} className="rounded-lg border border-border p-3 grid gap-3">
+          <div key={t.id} className="rounded-lg border border-border p-2 grid gap-2">
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0 flex-1">
                 {editingId === t.id ? (
