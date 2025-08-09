@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import RoadmapsManager from "@/components/control/RoadmapsManager";
 import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
-import LiveFocusView from "@/components/live/LiveFocusView";
+import MindWorldDashboard from "@/components/mindworld/MindWorldDashboard";
 import ArchivePanel from "@/components/archive/ArchivePanel";
 import { FloatingAssistant } from "@/components/live/FloatingAssistant";
 import AppHeader from "@/components/layout/AppHeader";
@@ -111,10 +111,10 @@ function useSwipeNavigation() {
 
 
 function LivePanel({ onManageRoadmaps }: { onManageRoadmaps?: () => void }) {
-  // Render the new Live Focus experience
+  // Render the new Mind World dashboard (v1)
   return (
     <section className="w-full h-full flex flex-col">
-      <LiveFocusView onManageRoadmaps={onManageRoadmaps} />
+      <MindWorldDashboard />
     </section>
   );
 }

@@ -15,9 +15,9 @@ export default function ActionDock({
     <div className="fixed inset-x-0" style={{ bottom: `calc(env(safe-area-inset-bottom) + 12px)` }}>
       <div className="mx-auto max-w-3xl px-4 pointer-events-none">
         <div className="pointer-events-auto glass-panel rounded-2xl p-2 elev flex flex-wrap gap-2 justify-center">
-          <Button className="h-12 rounded-xl px-5" onClick={onStart}>Start Focus Session</Button>
-          <Button variant="soft" className="h-12 rounded-xl px-5" onClick={onAnalyze}>Open Analyze Tool</Button>
-          <Button variant="soft" className="h-12 rounded-xl px-5" onClick={onNotes ?? (() => {})}>Notes</Button>
+          <Button className="h-12 rounded-xl px-5" onClick={onStart}>Start Hypnosis Session</Button>
+          <Button variant="soft" className="h-12 rounded-xl px-5" onClick={onAnalyze}>Analyze Tool</Button>
+          <Button variant="soft" className="h-12 rounded-xl px-5" onClick={onNotes ?? (() => {})}>Voice Notes</Button>
           <Button variant="soft" className="h-12 rounded-xl px-5" onClick={onVoice ?? (() => {})}>Voice</Button>
         </div>
       </div>

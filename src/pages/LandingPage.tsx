@@ -5,13 +5,13 @@ import { Card } from "@/components/ui/card";
 import FocusFlame from "@/components/mascot/FocusFlame";
 
 const copy = {
-  hero: {
-    headline: "One Focus. Massive Results.",
-    subheadline: "A calm, focused dashboard for your day. Plan once, act with clarity.",
-    ctaPrimary: "Get Started Free",
-    ctaSecondary: "See how it works",
-    micro: "No credit card · Cancel anytime."
-  },
+    hero: {
+      headline: "Your Mind. Your World. Your Focus.",
+      subheadline: "Enter a hypnosis-powered game world that grows with your focus and habits.",
+      ctaPrimary: "Enter Your World Free",
+      ctaSecondary: "See how it works",
+      micro: "No credit card · Cancel anytime."
+    },
   socialProof: {
     title: "Loved by focused builders",
     quotes: [
@@ -55,9 +55,9 @@ const copy = {
 
 export default function LandingPage() {
   useEffect(() => {
-    document.title = "MOS – Mind Operating System";
+    document.title = "MOS – Your Mind World";
     const meta = document.querySelector('meta[name="description"]');
-    const desc = "Calm, focused dashboard. Set intent, enter flow, track progress.";
+    const desc = "Hypnosis-powered game world for focus. Build streaks, earn XP, grow your hub.";
     if (meta) meta.setAttribute("content", desc);
     else {
       const m = document.createElement("meta");
