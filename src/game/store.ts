@@ -10,6 +10,7 @@ export type GameState = {
   setMood: (m: GameState["mood"]) => void;
   awardXP: (amount: number) => void;
   completeQuest: (id: string) => void;
+  incStreak: () => void;
   resetDaily: () => void;
 };
 
@@ -22,6 +23,7 @@ const defaults: GameState = {
   setMood() {},
   awardXP() {},
   completeQuest() {},
+  incStreak() {},
   resetDaily() {},
 };
 
@@ -58,6 +60,10 @@ export const useGameStore = create<GameState>((set, get) => {
       window.dispatchEvent(new CustomEvent("xp-sparkle", { detail: { amount } }));
     },
     completeQuest: (id) => persist({ quests: { ...get().quests, [id]: true } }),
+    incStreak: () => {
+      const s = get().stats;
+      persist({ stats: { ...s, streak: s.streak + 1 } });
+    },
     resetDaily: () => persist({ quests: {} }),
   };
 });

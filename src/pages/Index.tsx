@@ -16,6 +16,8 @@ import HUDBar from "@/game/hud/HUDBar";
 import FastTravel from "@/components/overlays/FastTravel";
 import Onboarding from "@/components/overlays/Onboarding";
 import HypnoPanel from "@/components/hypno/HypnoPanel";
+import { useGameStore } from "@/game/store";
+import { REWARDS, DAILY_QUESTS } from "@/game/QuestEngine";
 type PanelKey = "live" | "archive" | "control" | "create" | "analyze";
 
 const panelMap: Record<PanelKey, { grid: [number, number]; title: string; subtitle: string } > = {
@@ -318,6 +320,11 @@ const Index = () => {
   const [showKickoff, setShowKickoff] = useState(false);
   const { user, initializing } = useSupabaseAuth();
 
+  const completeQuest = useGameStore(s => s.completeQuest);
+  const awardXP = useGameStore(s => s.awardXP);
+  const resetDaily = useGameStore(s => s.resetDaily);
+  const incStreak = useGameStore(s => s.incStreak);
+
   // Signature moment: soft reactive spotlight following pointer
   const glowRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -339,6 +346,18 @@ const Index = () => {
     if (last !== today) setShowKickoff(true);
   }, []);
 
+  // Daily quests reset at day change
+  useEffect(() => {
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const last = localStorage.getItem('mos.questDate');
+    if (last !== todayStr) {
+      resetDaily();
+      try {
+        localStorage.setItem('mos.questDate', todayStr);
+        localStorage.removeItem('mos.fullclear');
+      } catch {}
+    }
+  }, [resetDaily]);
 const handleKickoffComplete = () => {
   try {
     const today = new Date().toISOString().slice(0, 10);
@@ -387,11 +406,47 @@ useEffect(() => {
     gotoPanel(panel);
     if (title) toast({ title, description });
   };
-  const onFocus = () => go('live', 'Focus', 'Starting focus session…');
-  const onHypno = () => go('create', 'Hypnosis', 'Opening hypnosis tools…');
-  const onVoice = () => go('archive', 'Voice', 'Opening voice notes…');
-  const onNote = () => go('create', 'Notes', 'Capture a quick note');
-  const onAnalyze = () => go('analyze', 'Analyze', 'Decision tools');
+
+  const checkFullClear = () => {
+    const today = new Date().toISOString().slice(0, 10);
+    const allDone = DAILY_QUESTS.every(q => (useGameStore.getState().quests as any)[q.id]);
+    if (allDone && localStorage.getItem('mos.fullclear') !== today) {
+      awardXP(REWARDS.fullClear);
+      incStreak();
+      try { localStorage.setItem('mos.fullclear', today); } catch {}
+    }
+  };
+
+  const onFocus = () => {
+    go('live', 'Focus', 'Starting focus session…');
+    completeQuest('pick-focus');
+    awardXP(REWARDS.completeQuest);
+    checkFullClear();
+  };
+  const onHypno = () => {
+    go('create', 'Hypnosis', 'Opening hypnosis tools…');
+    completeQuest('start-hypno');
+    awardXP(REWARDS.completeQuest);
+    checkFullClear();
+  };
+  const onVoice = () => {
+    go('archive', 'Voice', 'Opening voice notes…');
+    completeQuest('record-voice');
+    awardXP(REWARDS.completeQuest);
+    checkFullClear();
+  };
+  const onNote = () => {
+    go('create', 'Notes', 'Capture a quick note');
+    completeQuest('add-note');
+    awardXP(REWARDS.completeQuest);
+    checkFullClear();
+  };
+  const onAnalyze = () => {
+    go('analyze', 'Analyze', 'Decision tools');
+    completeQuest('open-analyze');
+    awardXP(REWARDS.completeQuest);
+    checkFullClear();
+  };
   const onMap = () => { window.dispatchEvent(new CustomEvent('open-fast-travel')); };
 
   document.addEventListener('mos:startFocus' as any, onFocus as any);
@@ -409,7 +464,7 @@ useEffect(() => {
     document.removeEventListener('mos:openAnalyze' as any, onAnalyze as any);
     document.removeEventListener('mos:openMap' as any, onMap as any);
   };
-}, [gotoPanel]);
+}, [gotoPanel, completeQuest, awardXP, incStreak]);
 
 if (!initializing && !user) {
   return <LandingPage />;
