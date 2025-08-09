@@ -1,10 +1,11 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import HubScene from "./HubScene";
 import MoodButton from "./MoodButton";
 import PhaserGame from "@/game/PhaserGame";
 import VirtualJoystick from "./VirtualJoystick";
 import ActionButton from "./ActionButton";
 import WorldOverlayRouter, { type OverlayId } from "./WorldOverlayRouter";
+import HUDBar from "@/game/hud/HUDBar";
 
 export default function MindWorldDashboard() {
   const [vec, setVec] = useState({ x: 0, y: 0 });
@@ -12,6 +13,33 @@ export default function MindWorldDashboard() {
   const [overlay, setOverlay] = useState<OverlayId | null>(null);
 
   const handleEnter = useCallback((id: OverlayId) => setOverlay(id), []);
+
+  // Listen to global HUD quick actions and open overlays accordingly
+  useEffect(() => {
+    const set = (id: OverlayId | null) => setOverlay(id);
+    const onFocus = () => set('focus');
+    const onHypno = () => set('mentor');
+    const onVoice = () => set('library');
+    const onNote = () => set('library');
+    const onAnalyze = () => set('analyze');
+    const onMap = () => set(null);
+
+    document.addEventListener('mos:startFocus' as any, onFocus as any);
+    document.addEventListener('mos:startHypnosis' as any, onHypno as any);
+    document.addEventListener('mos:voiceNote' as any, onVoice as any);
+    document.addEventListener('mos:addNote' as any, onNote as any);
+    document.addEventListener('mos:openAnalyze' as any, onAnalyze as any);
+    document.addEventListener('mos:openMap' as any, onMap as any);
+
+    return () => {
+      document.removeEventListener('mos:startFocus' as any, onFocus as any);
+      document.removeEventListener('mos:startHypnosis' as any, onHypno as any);
+      document.removeEventListener('mos:voiceNote' as any, onVoice as any);
+      document.removeEventListener('mos:addNote' as any, onNote as any);
+      document.removeEventListener('mos:openAnalyze' as any, onAnalyze as any);
+      document.removeEventListener('mos:openMap' as any, onMap as any);
+    };
+  }, []);
 
   return (
     <section className="w-full h-full">
@@ -33,6 +61,8 @@ export default function MindWorldDashboard() {
 
         {/* Overlays */}
         <WorldOverlayRouter id={overlay} onClose={() => setOverlay(null)} />
+        {/* HUD overlay */}
+        <HUDBar />
       </HubScene>
     </section>
   );
