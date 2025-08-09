@@ -86,6 +86,18 @@ export default function MindWorldDashboard() {
     };
   }, [awardXP, completeQuest]);
 
+  // Close overlay with Escape key
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && overlay) {
+        e.preventDefault();
+        setOverlay(null);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [overlay]);
+
   return (
     <section className="w-full h-full">
       <HubScene>
@@ -101,6 +113,9 @@ export default function MindWorldDashboard() {
 
         {/* HUD overlay */}
         <GameHUD />
+
+        {/* World Overlays */}
+        <WorldOverlayRouter id={overlay} onClose={() => setOverlay(null)} />
       </HubScene>
     </section>
   );
