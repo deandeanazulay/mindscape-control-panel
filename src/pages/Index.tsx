@@ -6,6 +6,8 @@ import RoadmapsManager from "@/components/control/RoadmapsManager";
 import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import LiveFocusView from "@/components/live/LiveFocusView";
 import ArchivePanel from "@/components/archive/ArchivePanel";
+import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
+import { useNavigate } from "react-router-dom";
 
 type PanelKey = "live" | "archive" | "control" | "create" | "analyze";
 
@@ -236,6 +238,8 @@ function OverlayArrows({
 
 const Index = () => {
   const { pos, onPointerDown, onPointerUp, current, lastMove, moveLeft, moveRight, moveUp, moveDown, gotoPanel } = useSwipeNavigation();
+  const { user, initializing } = useSupabaseAuth();
+  const navigate = useNavigate();
 
   // Signature moment: soft reactive spotlight following pointer
   const glowRef = useRef<HTMLDivElement>(null);
@@ -258,8 +262,10 @@ const Index = () => {
         <h1 className="sr-only">Mind Operating System (MOS)</h1>
       </header>
 
-      <nav className="absolute top-4 right-4 z-10 flex items-center gap-2">
-        <Button variant="secondary" onClick={()=> toast({ title: "Connect Supabase", description: "Click the green Supabase button (top-right in Lovable) to enable Auth, DB & Storage." })}>Connect Supabase</Button>
+<nav className="absolute top-4 right-4 z-10 flex items-center gap-2">
+        {!initializing && !user && (
+          <Button variant="secondary" onClick={() => navigate("/auth")}>Sign in</Button>
+        )}
         <AuthMenu />
       </nav>
 
