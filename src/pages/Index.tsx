@@ -424,10 +424,9 @@ useEffect(() => {
     checkFullClear();
   };
   const onHypno = () => {
-    go('create', 'Hypnosis', 'Opening hypnosis tools…');
-    completeQuest('start-hypno');
-    awardXP(REWARDS.completeQuest);
-    checkFullClear();
+    // Open Hypno overlay; rewards are handled on actual session start
+    toast({ title: 'Hypnosis', description: 'Opening hypnosis tools…' });
+    window.dispatchEvent(new CustomEvent('open-hypno-panel'));
   };
   const onVoice = () => {
     go('archive', 'Voice', 'Opening voice notes…');
