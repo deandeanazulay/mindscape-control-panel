@@ -23,10 +23,12 @@ export function ProgressBar({ percent }: { percent: number }) {
     <div className="glass-panel rounded-xl p-4 elev relative animate-fade-in smooth">
       <div className="flex items-center justify-between">
         <div className="text-sm font-medium">Today's Progress</div>
-        <div className="text-xs text-muted-foreground" aria-live="polite">{clamped}%</div>
       </div>
-      <div className="mt-2">
+      <div className="mt-2 relative">
         <Progress value={clamped} />
+        <div className="absolute inset-0 grid place-items-center pointer-events-none">
+          <span className="text-xs font-medium text-secondary-foreground">{clamped}%</span>
+        </div>
       </div>
       {showBump && (
         <span

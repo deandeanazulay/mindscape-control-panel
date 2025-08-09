@@ -11,6 +11,8 @@ const buttonVariants = cva(
       variant: {
         default: "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] hover:bg-[hsl(var(--accent-hover))]",
         solid: "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] hover:bg-[hsl(var(--accent-hover))]",
+        primary: "rounded-xl bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--primary-glow,var(--primary)))] text-[hsl(var(--primary-foreground))] shadow-sm hover:to-[hsl(var(--primary))]",
+        softPrimary: "rounded-xl bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] border border-[hsl(var(--primary)/0.25)] hover:bg-[hsl(var(--primary)/0.18)]",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:

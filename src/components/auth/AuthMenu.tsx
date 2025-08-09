@@ -20,8 +20,8 @@ export function AuthMenu() {
   if (!user) {
     return (
       <div className="flex items-center gap-2">
-        <Button asChild variant="secondary">
-          <Link to="/auth">Sign in</Link>
+        <Button asChild variant="primary" size="lg">
+          <Link to="/auth">Get Started Free</Link>
         </Button>
       </div>
     );
@@ -30,7 +30,7 @@ export function AuthMenu() {
   return (
     <div className="flex items-center gap-2">
       <span className="text-xs text-muted-foreground max-w-[160px] truncate">{user.email}</span>
-      <Button variant="outline" size="sm" onClick={signOut}>Sign out</Button>
+      <Button variant="softPrimary" size="sm" onClick={signOut}>Sign out</Button>
     </div>
   );
 }

@@ -376,14 +376,7 @@ const Index = () => {
         moveDown={moveDown}
       />
 
-      {/* Floating edge arrows */}
-      <OverlayArrows
-        pos={pos}
-        moveLeft={moveLeft}
-        moveRight={moveRight}
-        moveUp={moveUp}
-        moveDown={moveDown}
-      />
+      {/* Floating edge arrows removed for immersive design */}
 
       <footer className="absolute bottom-4 left-4 text-xs text-muted-foreground z-10">
         <span>{current.toUpperCase()}</span>

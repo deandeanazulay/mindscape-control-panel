@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { CurrentFocusCard } from "./CurrentFocusCard";
 import { QuickActionsBar } from "./QuickActionsBar";
 import { ProgressBar } from "./ProgressBar";
-import { MoodCheck } from "./MoodCheck";
+import HeroCard from "./HeroCard";
+import { MoodCarousel } from "./MoodCarousel";
 
 import { useRoadmapProgress } from "@/hooks/useRoadmapProgress";
 import { PanelHeaderUnified } from "@/components/layout/PanelHeaderUnified";
@@ -253,6 +254,8 @@ export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?:
           </div>
         )}
 
+        <HeroCard taskTitle={task?.title ?? null} />
+
         <div key={task?.id ?? 'none'} className="animate-in fade-in-50 duration-300">
           <CurrentFocusCard
             activeRoadmap={activeRoadmap}
@@ -267,7 +270,7 @@ export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?:
         <ProgressBar percent={percent} />
         <XPBar />
 
-        <MoodCheck />
+        <MoodCarousel />
       </main>
       <QuickAddTaskFAB roadmapId={activeRoadmap?.id ?? null} />
     </section>
