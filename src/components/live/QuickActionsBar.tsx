@@ -7,7 +7,7 @@ import { toast } from "@/hooks/use-toast";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useBackgroundAudio } from "@/hooks/useBackgroundAudio";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type Task = {
   id: string;
@@ -77,6 +77,71 @@ export function QuickActionsBar({ currentTask }: { currentTask: Task | null }) {
     toast({ title: "Saved", description: "Your note has been added to Archive." });
     setNoteText("");
     setNoteOpen(false);
+  };
+
+  // Voice note recording
+  const [voiceOpen, setVoiceOpen] = useState(false);
+  const [recording, setRecording] = useState(false);
+  const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
+  const [chunks, setChunks] = useState<BlobPart[]>([]);
+  const [elapsed, setElapsed] = useState(0);
+  const timerRef = useRef<number | null>(null);
+
+  const startRecording = async () => {
+    if (!user) {
+      toast({ title: "Sign in required", description: "Connect Supabase to record voice notes." });
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mr = new MediaRecorder(stream, { mimeType: "audio/webm" });
+      setChunks([]);
+      mr.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) setChunks((prev) => [...prev, e.data]);
+      };
+      mr.onstop = async () => {
+        if (timerRef.current) { window.clearInterval(timerRef.current); timerRef.current = null; }
+        try {
+          const blob = new Blob(chunks, { type: "audio/webm" });
+          const filePath = `${user!.id}/${Date.now()}.webm`;
+          const { error: upErr } = await supabase.storage.from("voice-notes").upload(filePath, blob, { contentType: "audio/webm" });
+          if (upErr) throw upErr;
+          const { error: insErr } = await supabase.from("moments").insert({
+            user_id: user!.id,
+            type: "audio",
+            content: "Voice note",
+            storage_path: `voice-notes/${filePath}`,
+            folder: "Memories",
+            tags: currentTask ? ["voice", "task", currentTask.id] : ["voice"],
+            visibility: "private",
+          });
+          if (insErr) throw insErr;
+          toast({ title: "Saved", description: "Voice note added to Archive." });
+        } catch (e) {
+          console.error(e);
+          toast({ title: "Error", description: "Could not save voice note." });
+        } finally {
+          setRecording(false);
+          setVoiceOpen(false);
+          setElapsed(0);
+          stream.getTracks().forEach((t) => t.stop());
+        }
+      };
+      mr.start();
+      setRecorder(mr);
+      setRecording(true);
+      setElapsed(0);
+      timerRef.current = window.setInterval(() => setElapsed((s) => s + 1), 1000) as unknown as number;
+    } catch (e) {
+      console.error(e);
+      toast({ title: "Microphone blocked", description: "Please allow microphone access." });
+    }
+  };
+
+  const stopRecording = () => {
+    try {
+      recorder?.stop();
+    } catch {}
   };
 
   const categories = useMemo(() => {
@@ -196,6 +261,31 @@ export function QuickActionsBar({ currentTask }: { currentTask: Task | null }) {
       >
         Open Analyze Tool
       </Button>
+
+      {/* Voice Note */}
+      <Dialog open={voiceOpen} onOpenChange={setVoiceOpen}>
+        <DialogTrigger asChild>
+          <Button size="sm" variant="ghost">Voice Note</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Record voice note</DialogTitle>
+          </DialogHeader>
+          <div className="flex items-center justify-between gap-4">
+            <div className="text-sm text-muted-foreground">
+              {recording ? "Recording..." : "Tap record to start. Saved privately to Archive."}
+            </div>
+            <div className="text-sm font-mono tabular-nums">{String(Math.floor(elapsed/60)).padStart(2,'0')}:{String(elapsed%60).padStart(2,'0')}</div>
+          </div>
+          <div className="flex justify-end gap-2">
+            {!recording ? (
+              <Button onClick={startRecording}>Record</Button>
+            ) : (
+              <Button variant="destructive" onClick={stopRecording}>Stop & Save</Button>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Notes */}
       <Dialog open={noteOpen} onOpenChange={setNoteOpen}>

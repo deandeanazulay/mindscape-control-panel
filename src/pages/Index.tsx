@@ -5,6 +5,7 @@ import { AuthMenu } from "@/components/auth/AuthMenu";
 import RoadmapsManager from "@/components/control/RoadmapsManager";
 import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import LiveFocusView from "@/components/live/LiveFocusView";
+import ArchivePanel from "@/components/archive/ArchivePanel";
 
 type PanelKey = "live" | "archive" | "control" | "create" | "analyze";
 
@@ -96,25 +97,6 @@ function LivePanel() {
   );
 }
 
-function ArchivePanel() {
-  const folders = ["Skills","Memories","Achievements","Lessons","Relationships"];
-  return (
-    <section className="w-full h-full flex flex-col">
-      <PanelHeader title="Archive" subtitle="Your organized memories and references" />
-      <main className="flex-1 min-h-0 overflow-y-auto p-6 grid grid-cols-2 sm:grid-cols-3 gap-4 content-start">
-        {folders.map((f)=> (
-          <article key={f} className="glass-panel rounded-xl p-4 elev smooth hover:scale-[1.02]">
-            <h3 className="font-semibold">{f}</h3>
-            <p className="text-xs text-muted-foreground mt-1">Cards, media, and notes</p>
-            <div className="mt-4">
-              <Button size="sm" onClick={()=> toast({ title: f, description: "Open folder (sync later)." })}>Open</Button>
-            </div>
-          </article>
-        ))}
-      </main>
-    </section>
-  );
-}
 
 function ControlPanel() {
   return (
