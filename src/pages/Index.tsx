@@ -9,6 +9,8 @@ import { FloatingAssistant } from "@/components/live/FloatingAssistant";
 import AppHeader from "@/components/layout/AppHeader";
 import { PanelHeaderUnified } from "@/components/layout/PanelHeaderUnified";
 import DailyKickoff from "@/components/live/DailyKickoff";
+import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
+import LandingPage from "./LandingPage";
 
 type PanelKey = "live" | "archive" | "control" | "create" | "analyze";
 
@@ -310,6 +312,7 @@ function CompassIndicator({
 const Index = () => {
   const { pos, onPointerDown, onPointerUp, current, moveLeft, moveRight, moveUp, moveDown, gotoPanel } = useSwipeNavigation();
   const [showKickoff, setShowKickoff] = useState(false);
+  const { user, initializing } = useSupabaseAuth();
 
   // Signature moment: soft reactive spotlight following pointer
   const glowRef = useRef<HTMLDivElement>(null);
@@ -341,9 +344,13 @@ const Index = () => {
     gotoPanel("live");
   };
 
+  if (!initializing && !user) {
+    return <LandingPage />;
+  }
+
   return (
     <div className="w-screen h-screen overflow-hidden relative" onPointerDown={onPointerDown} onPointerUp={onPointerUp}>
-<AppHeader />
+      <AppHeader />
 
       <div className="absolute inset-0 smooth" style={{ transform: translate }}>
         {/* 3x3 grid canvas sized by viewport */}

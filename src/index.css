@@ -238,4 +238,6 @@ All colors MUST be HSL.
 
 /* Safe area helper */
 .dock-safe { padding-bottom: calc(env(safe-area-inset-bottom) + 12px); }
+.pb-safe { padding-bottom: calc(env(safe-area-inset-bottom) + 12px); }
+.pt-safe { padding-top: calc(env(safe-area-inset-top) + 12px); }
 

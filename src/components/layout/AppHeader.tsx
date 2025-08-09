@@ -26,11 +26,6 @@ export default function AppHeader() {
 
           {/* Right controls */}
           <nav className="flex items-center gap-2">
-            {!initializing && !user && (
-              <Button asChild variant="primary" size="sm">
-                <Link to="/auth">Get Started Free</Link>
-              </Button>
-            )}
             <SoundControl buttonSize="icon" buttonVariant="ghost" />
             <AuthMenu />
           </nav>

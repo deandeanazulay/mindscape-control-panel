@@ -9,6 +9,8 @@ import { QuickActionsBar } from "./QuickActionsBar";
 import { ProgressBar } from "./ProgressBar";
 import HeroCard from "./HeroCard";
 import { MoodCarousel } from "./MoodCarousel";
+import ActionDock from "./ActionDock";
+import PreviewCards from "./PreviewCards";
 
 import { useRoadmapProgress } from "@/hooks/useRoadmapProgress";
 import { PanelHeaderUnified } from "@/components/layout/PanelHeaderUnified";
@@ -267,11 +269,13 @@ export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?:
 
         <QuickActionsBar currentTask={task} />
 
-        <ProgressBar percent={percent} />
-        <XPBar />
-
         <MoodCarousel />
+        <PreviewCards progressPercent={percent} />
       </main>
+      <ActionDock 
+        onStart={() => toast({ title: "Focus Session", description: "Starting focus mode soon." })}
+        onAnalyze={() => toast({ title: "Analyze", description: "Analyze tools coming soon." })}
+      />
       <QuickAddTaskFAB roadmapId={activeRoadmap?.id ?? null} />
     </section>
   );
