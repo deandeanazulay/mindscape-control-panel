@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Aurora OS Overlay",
+  "version": "0.1.0",
+  "description": "Your AI + HUD on any website (voice, actions).",
+  "permissions": ["storage", "tabs", "activeTab", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "background": { "service_worker": "background/service.js" },
+  "action": { "default_title": "Aurora" },
+  
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content/inject.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [{
+    "resources": ["ui/overlay.js", "assets/*"],
+    "matches": ["<all_urls>"]
+  }],
+  "commands": {
+    "toggle-overlay": { "suggested_key": { "default": "Alt+A" }, "description": "Toggle Aurora HUD" },
+    "push-to-talk":  { "suggested_key": { "default": "Alt+Space" }, "description": "Hold to talk" }
+  }
+}

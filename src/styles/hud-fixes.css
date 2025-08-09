@@ -1,5 +1,13 @@
 /* HUD readability adjustments using design system tokens (HSL) */
 
+/* Clamp HUD within safe bottom rail and margins (overrides utility left/right) */
+.hud-readable {
+  left: clamp(12px, 2vw, 24px);
+  right: clamp(12px, 2vw, 24px);
+  bottom: max(env(safe-area-inset-bottom), 12px);
+  z-index: 50;
+}
+
 /* Darken the glass when HUD sits on bright content so white text keeps contrast */
 .hud-readable .hud-glass {
   background: linear-gradient(
@@ -7,8 +15,12 @@
     hsl(var(--background) / 0.68),
     hsl(var(--background) / 0.50)
   );
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
   border: 1px solid hsl(var(--glass-border));
+  box-shadow: var(--shadow-soft);
   color: hsl(var(--foreground));
+  border-radius: 18px;
 }
 
 /* Subtle glow stays neutral to avoid washing text */
