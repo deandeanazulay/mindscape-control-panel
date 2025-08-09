@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { AuthMenu } from "@/components/auth/AuthMenu";
 import RoadmapsManager from "@/components/control/RoadmapsManager";
 import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import LiveFocusView from "@/components/live/LiveFocusView";
 import ArchivePanel from "@/components/archive/ArchivePanel";
-import { SoundControl } from "@/components/sounds/SoundControl";
-import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
-import { useNavigate } from "react-router-dom";
+
+
+import AppHeader from "@/components/layout/AppHeader";
+import { PanelHeaderUnified } from "@/components/layout/PanelHeaderUnified";
 
 type PanelKey = "live" | "archive" | "control" | "create" | "analyze";
 
@@ -85,16 +85,6 @@ function useSwipeNavigation() {
   return { pos, onPointerDown, onPointerUp, current, lastMove, moveLeft, moveRight, moveUp, moveDown, gotoPanel };
 }
 
-function PanelHeader({ title, subtitle }: { title: string; subtitle: string }) {
-  return (
-    <header className="px-6 pt-8">
-      <div className="glass-panel rounded-xl p-5 elev">
-        <h2 className="text-xl font-semibold">{title}</h2>
-        <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
-      </div>
-    </header>
-  );
-}
 
 function LivePanel({ onManageRoadmaps }: { onManageRoadmaps?: () => void }) {
   // Render the new Live Focus experience
@@ -109,7 +99,7 @@ function LivePanel({ onManageRoadmaps }: { onManageRoadmaps?: () => void }) {
 function ControlPanel() {
   return (
     <section className="w-full h-full flex flex-col">
-      <PanelHeader title="Control" subtitle="Manage roadmaps and tasks" />
+      <PanelHeaderUnified title="Control" subtitle="Manage roadmaps and tasks" />
       <main className="flex-1 min-h-0 overflow-y-auto p-6 max-w-3xl mx-auto w-full">
         <RoadmapsManager />
       </main>
@@ -120,7 +110,7 @@ function ControlPanel() {
 function CreatePanel() {
   return (
     <section className="w-full h-full flex flex-col">
-      <PanelHeader title="Create" subtitle="Guided prompts coming in Sprint 2" />
+      <PanelHeaderUnified title="Create" subtitle="Guided prompts coming in Sprint 2" />
       <main className="flex-1 min-h-0 overflow-y-auto p-6 grid place-items-center">
         <div className="glass-panel rounded-xl p-6 text-center max-w-md">
           <p className="text-sm text-muted-foreground">Prompt packs will help you capture ideas and convert them to goals or archive cards.</p>
@@ -133,7 +123,7 @@ function CreatePanel() {
 function AnalyzePanel() {
   return (
     <section className="w-full h-full flex flex-col">
-      <PanelHeader title="Analyze" subtitle="Decision tools coming in Sprint 2" />
+      <PanelHeaderUnified title="Analyze" subtitle="Decision tools coming in Sprint 2" />
       <main className="flex-1 min-h-0 overflow-y-auto p-6 grid grid-cols-2 sm:grid-cols-4 gap-4 content-start">
         {["If–Then","Pros / Cons","One Constraint","One Metric"].map((tool)=> (
           <button key={tool} onClick={()=> toast({ title: tool, description: "Will save as analysis cards linked to goals." })} className="glass-panel rounded-xl p-4 elev smooth hover:scale-[1.02] text-left">
@@ -239,8 +229,6 @@ function OverlayArrows({
 
 const Index = () => {
   const { pos, onPointerDown, onPointerUp, current, lastMove, moveLeft, moveRight, moveUp, moveDown, gotoPanel } = useSwipeNavigation();
-  const { user, initializing } = useSupabaseAuth();
-  const navigate = useNavigate();
 
   // Signature moment: soft reactive spotlight following pointer
   const glowRef = useRef<HTMLDivElement>(null);
@@ -259,17 +247,7 @@ const Index = () => {
 
   return (
     <div className="w-screen h-screen overflow-hidden relative" onPointerDown={onPointerDown} onPointerUp={onPointerUp}>
-      <header className="absolute top-4 left-4 z-10">
-        <h1 className="sr-only">Mind Operating System (MOS)</h1>
-      </header>
-
-<nav className="absolute top-4 right-4 z-10 flex items-center gap-2">
-        {!initializing && !user && (
-          <Button variant="secondary" onClick={() => navigate("/auth")}>Sign in</Button>
-        )}
-        <SoundControl buttonSize="icon" buttonVariant="ghost" />
-        <AuthMenu />
-      </nav>
+<AppHeader />
 
       <div className="absolute inset-0 smooth" style={{ transform: translate }}>
         {/* 3x3 grid canvas sized by viewport */}

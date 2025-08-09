@@ -10,6 +10,7 @@ import { ProgressBar } from "./ProgressBar";
 import { MoodCheck } from "./MoodCheck";
 import { FloatingAssistant } from "@/components/live/FloatingAssistant";
 import { useRoadmapProgress } from "@/hooks/useRoadmapProgress";
+import { PanelHeaderUnified } from "@/components/layout/PanelHeaderUnified";
 
 type Roadmap = {
   id: string;
@@ -181,14 +182,11 @@ export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?:
 
   return (
     <section className="w-full h-full flex flex-col">
-      <header className="px-6 pt-8">
-        <div className="glass-panel rounded-xl p-5 elev flex items-center justify-between gap-3">
-          <div>
-            <h2 className="text-xl font-semibold">Live</h2>
-            <p className="text-sm text-muted-foreground mt-1">Focus on one thing, right now.</p>
-          </div>
-          <div className="flex items-center gap-2">
-            {/* Roadmap switcher */}
+      <PanelHeaderUnified
+        title="Live"
+        subtitle="Focus on one thing, right now."
+        actions={
+          <>
             <select
               className="text-sm bg-background border border-border rounded px-3 py-2"
               value={activeRoadmap?.id ?? ""}
@@ -201,7 +199,6 @@ export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?:
                 </option>
               ))}
             </select>
-            {/* Create roadmap quick action (simple stub) */}
             <Button
               variant="secondary"
               onClick={() => {
@@ -211,9 +208,9 @@ export default function LiveFocusView({ onManageRoadmaps }: { onManageRoadmaps?:
             >
               Manage
             </Button>
-          </div>
-        </div>
-      </header>
+          </>
+        }
+      />
 
       <main className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-4 p-6">
         {!user && !initializing && (

@@ -141,7 +141,7 @@ export function QuickActionsBar({ currentTask }: { currentTask: Task | null }) {
 
 
   return (
-    <div className="glass-panel rounded-xl p-3 elev flex flex-wrap items-center gap-2">
+    <div className="glass-panel rounded-xl p-3 elev flex flex-wrap items-center gap-2 sm:gap-3">
       {/* Play Sound */}
       <SoundControl label="Play Sound" buttonVariant="secondary" buttonSize="sm" />
 
