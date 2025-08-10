@@ -1,5 +1,6 @@
 @import "./styles/vars.css";
 @import "./styles/path.css";
+@import "./styles/hud-maple.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
