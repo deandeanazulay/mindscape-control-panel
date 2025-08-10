@@ -71,3 +71,22 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+---
+
+## Mobile (iOS/Android) setup with Capacitor
+
+Follow these steps after cloning your repo locally:
+
+1. npm install
+2. npm run build
+3. npx cap add ios && npx cap add android
+4. npx cap sync
+5. iOS: npx cap run ios (or open ios/App.xcworkspace in Xcode)
+6. Android: npx cap run android (or open android/ in Android Studio)
+
+Notes
+- Hot reload: capacitor.config.ts is preconfigured with the Lovable sandbox URL so the native app loads the live preview. Keep your Lovable preview running.
+- After you pull new changes: run npx cap sync again.
+- For production builds: remove the server.url from capacitor.config.ts and use the compiled web bundle (dist) by running npm run build before syncing.
+
