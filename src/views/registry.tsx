@@ -2,7 +2,7 @@ import { lazy } from "react";
 
 export type ViewId =
   | "control" | "focus" | "hypno" | "voice" | "notes"
-  | "analyze" | "browser" | "portal" | "archive" | "settings" | "agent";
+  | "analyze" | "browser" | "portal" | "archive" | "settings" | "agent" | "runner";
 
 export type ViewMeta = {
   id: ViewId;
@@ -25,4 +25,5 @@ export const views: ViewMeta[] = [
   { id: "archive", label: "Archive", path: "/app/archive",  component: lazy(() => import("./ArchiveView")) },
   { id: "settings",label: "Settings",path: "/app/settings", component: lazy(() => import("./SettingsView")) },
   { id: "agent",   label: "Agent",   path: "/app/agent",    component: lazy(() => import("./AgentFullView")) },
+  { id: "runner",  label: "Node",    path: "/app/node/:id", component: lazy(() => import("../pages/NodeRunner")) },
 ];
