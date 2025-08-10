@@ -1,22 +1,32 @@
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useMemo } from "react";
 import { Route, Routes, useLocation, Navigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { views } from "@/views/registry";
 import { GameHUD } from "@/components/hud/GameHUD";
 import { bus } from "@/utils/bus";
 import { useViewNav } from "@/state/view";
-
+import { useXPChime } from "@/hooks/useXPChime";
+import { useSwipeNav } from "@/hooks/useSwipeNav";
 export default function AppShell() {
   const loc = useLocation();
   const open = useViewNav();
+
+  const currentRoom = useMemo(() => (views.find(v => loc.pathname.startsWith(v.path))?.id ?? "control"), [loc.pathname]);
+
+  useXPChime();
+  const swipe = useSwipeNav();
 
   useEffect(() => {
     const off = bus.on('nav:view', ({ id, params }) => open(id as any, params));
     return off;
   }, [open]);
 
+  useEffect(() => {
+    const meta = views.find(v => loc.pathname.startsWith(v.path));
+    if (meta) document.title = `Aurora OS — ${meta.label}`;
+  }, [loc.pathname]);
   return (
-    <div className="min-h-screen">
+    <div className={`min-h-screen room-${currentRoom}`} {...swipe}>
       <AnimatePresence mode="wait">
         <Routes location={loc} key={loc.pathname + loc.search}>
           {views.map((v) => (
