@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useGameStore } from "@/game/store";
 import { quickSlots } from "@/game/hud/hud.data";
 import { EvolvingSphere } from "@/components/effects/EvolvingSphere";
-import { Mic } from "lucide-react";
+import { Mic, ChevronDown, ChevronUp } from "lucide-react";
 import { useViewNav } from "@/state/view";
 import { Link, useNavigate } from "react-router-dom";
 import { views } from "@/views/registry";
@@ -21,6 +21,24 @@ export function GameHUD() {
     openMap: 'portal',
   };
 
+  // Mobile collapse state
+  const [isMobile, setIsMobile] = useState(false);
+  const [expanded, setExpanded] = useState(true);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)');
+    const apply = () => setIsMobile(mq.matches);
+    apply();
+    const handler = () => apply();
+    // @ts-ignore cross-browser support
+    if (mq.addEventListener) mq.addEventListener('change', handler); else mq.addListener(handler);
+    return () => {
+      // @ts-ignore
+      if (mq.removeEventListener) mq.removeEventListener('change', handler); else mq.removeListener(handler);
+    };
+  }, []);
+  useEffect(() => { setExpanded(isMobile ? false : true); }, [isMobile]);
+  const showMetrics = !isMobile || expanded;
+
   // Desktop hotkeys 1..6 (preserved from legacy HUD)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -35,10 +53,11 @@ export function GameHUD() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
+
   return (
     <footer
       id="aurora-hud"
-      className="hud-maple fixed z-[120] left-[clamp(8px,2vw,20px)] right-[clamp(8px,2vw,20px)] bottom-[max(env(safe-area-inset-bottom),12px)] rounded-2xl px-4 py-3 select-none pointer-events-auto"
+      className="hud-maple fixed relative z-[120] left-[clamp(8px,2vw,20px)] right-[clamp(8px,2vw,20px)] bottom-[max(env(safe-area-inset-bottom),12px)] rounded-2xl px-4 py-3 select-none pointer-events-auto"
       aria-label="Game HUD"
     >
       <span className="hud-spot" />
@@ -72,7 +91,6 @@ export function GameHUD() {
                       if (!viewId) return;
                       const path = views.find((v) => v.id === viewId)?.path;
                       if (path) navigate(path);
-
                     }}
                   >
                     {a.icon ? (
@@ -99,32 +117,46 @@ export function GameHUD() {
           </ul>
         </div>
 
-        {/* Row 2: Gauges full width */}
-        <div className="flex md:flex-row flex-col gap-2 md:items-center">
-          <div className="maple-gauge">
-            <div className="maple-gauge__top">
-              <span className="maple-gauge__label">HP</span>
-              <span className="maple-gauge__val">{Math.floor(stats.hp)}%</span>
+        {/* Row 2: Gauges full width (hidden when collapsed on mobile) */}
+        {showMetrics && (
+          <div className="flex md:flex-row flex-col gap-2 md:items-center animate-fade-in">
+            <div className="maple-gauge">
+              <div className="maple-gauge__top">
+                <span className="maple-gauge__label">HP</span>
+                <span className="maple-gauge__val">{Math.floor(stats.hp)}%</span>
+              </div>
+              <div className="maple-gauge__bar hp"><span style={{ width: `${stats.hp}%` }} /></div>
             </div>
-            <div className="maple-gauge__bar hp"><span style={{ width: `${stats.hp}%` }} /></div>
-          </div>
-          <div className="maple-gauge">
-            <div className="maple-gauge__top">
-              <span className="maple-gauge__label">MP</span>
-              <span className="maple-gauge__val">{Math.floor(stats.mp)}%</span>
+            <div className="maple-gauge">
+              <div className="maple-gauge__top">
+                <span className="maple-gauge__label">MP</span>
+                <span className="maple-gauge__val">{Math.floor(stats.mp)}%</span>
+              </div>
+              <div className="maple-gauge__bar mp"><span style={{ width: `${stats.mp}%` }} /></div>
             </div>
-            <div className="maple-gauge__bar mp"><span style={{ width: `${stats.mp}%` }} /></div>
-          </div>
-          <div className="maple-gauge">
-            <div className="maple-gauge__top">
-              <span className="maple-gauge__label">XP</span>
-              <span className="maple-gauge__val">{Math.floor(stats.xp)}%</span>
+            <div className="maple-gauge">
+              <div className="maple-gauge__top">
+                <span className="maple-gauge__label">XP</span>
+                <span className="maple-gauge__val">{Math.floor(stats.xp)}%</span>
+              </div>
+              <div className="maple-gauge__bar xp"><span style={{ width: `${stats.xp}%` }} /></div>
             </div>
-            <div className="maple-gauge__bar xp"><span style={{ width: `${stats.xp}%` }} /></div>
           </div>
-        </div>
+        )}
       </div>
+
+      {/* Mobile expand/collapse toggle */}
+      {isMobile && (
+        <button
+          type="button"
+          aria-label={expanded ? "Collapse HUD" : "Expand HUD"}
+          aria-expanded={expanded}
+          onClick={() => setExpanded((v) => !v)}
+          className="absolute right-2 bottom-2 md:hidden rounded-full bg-background/60 border px-2 py-1 text-xs hover-scale"
+        >
+          {expanded ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
+        </button>
+      )}
     </footer>
   );
 }
-
