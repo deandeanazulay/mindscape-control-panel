@@ -1,9 +1,9 @@
-import RoadmapHome from "@/pages/RoadmapHome";
+import GameHome from "@/game/path/GameHome";
 
 export default function ControlView() {
   return (
     <div className="min-h-screen">
-      <RoadmapHome />
+      <GameHome />
     </div>
   );
 }
