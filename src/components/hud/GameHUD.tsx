@@ -2,13 +2,21 @@ import React, { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useGameStore } from "@/game/store";
 import { quickSlots } from "@/game/hud/hud.data";
-import { useHUDActions } from "@/game/hud/useHUDActions";
 import { EvolvingSphere } from "@/components/effects/EvolvingSphere";
 import { Mic } from "lucide-react";
+import { useViewNav } from "@/state/view";
 
 export function GameHUD() {
   const stats = useGameStore((s) => s.stats);
-  const { run } = useHUDActions();
+  const open = useViewNav();
+  const actionToView: Record<string, any> = {
+    startFocus: 'focus',
+    startHypnosis: 'hypno',
+    voiceNote: 'voice',
+    addNote: 'notes',
+    openAnalyze: 'analyze',
+    openMap: 'portal',
+  };
 
   // Desktop hotkeys 1..6 (preserved from legacy HUD)
   useEffect(() => {
@@ -18,12 +26,12 @@ export function GameHUD() {
       const n = Number(e.key);
       if (n >= 1 && n <= 6) {
         const slot = quickSlots[n - 1];
-        if (slot) run(slot.action as any);
+        if (slot) open(actionToView[slot.action]);
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [run]);
+  }, [open]);
   return (
     <footer
       id="aurora-hud"
@@ -50,7 +58,7 @@ export function GameHUD() {
             {quickSlots.map((a) => (
               <li key={a.id} className="snap-start">
                 <button
-                  onClick={() => run(a.action as any)}
+                  onClick={() => open(actionToView[a.action])}
                   className="action-chip"
                   aria-label={a.label}
                   title={a.label}
@@ -66,7 +74,7 @@ export function GameHUD() {
             ))}
             <li className="snap-start">
               <button
-                onClick={() => document.dispatchEvent(new CustomEvent('mos:openAgent'))}
+                onClick={() => open('agent')}
                 className="action-chip mic"
                 aria-label="Open Aurora Agent"
                 title="Aurora Agent"
