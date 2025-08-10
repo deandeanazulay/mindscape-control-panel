@@ -72,22 +72,20 @@ export function FloatingAssistant({ task, onUpdated }: { task: Task | null; onUp
 
   return (
     <>
-      {/* Floating chat bubble */}
       <button
         aria-label="Open assistant chat"
         onClick={() => setOpen(true)}
-        className="fixed z-40 w-14 h-14 rounded-full glass-panel elev grid place-items-center hover-scale smooth"
+        className="fixed z-[100] w-14 h-14 rounded-full glass-panel elev grid place-items-center hover-scale smooth"
         style={{
           right: 'calc(env(safe-area-inset-right) + 12px)',
-          bottom: 'calc(env(safe-area-inset-bottom) + var(--compass-bottom, 12px) + var(--compass-size, 72px) + var(--gap, 12px))'
+          bottom: 'calc(env(safe-area-inset-bottom) + var(--hud-h, 96px) + var(--hud-gap, 12px) + 12px)'
         }}
       >
         <MessageSquare className="w-6 h-6" />
       </button>
 
-      {/* Slide-up chat panel */}
       <Drawer open={open} onOpenChange={setOpen} shouldScaleBackground>
-        <DrawerContent className="p-0" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 96px)" }}>
+        <DrawerContent className="p-0 z-[100]" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + var(--hud-h, 96px) + var(--hud-gap, 12px))' }}>
           <DrawerHeader className="p-3 border-b">
             <div className="flex items-center justify-between">
               <DrawerTitle>Assistant</DrawerTitle>

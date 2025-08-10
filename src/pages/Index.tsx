@@ -513,9 +513,6 @@ if (!initializing && !user) {
       {/* Daily Kickoff overlay */}
       <DailyKickoff visible={showKickoff} onComplete={handleKickoffComplete} />
 
-      {/* Global AI assistant */}
-      <FloatingAssistant task={null} onUpdated={() => {}} />
-
       {/* Unified HUD */}
       <HUDBar />
 
