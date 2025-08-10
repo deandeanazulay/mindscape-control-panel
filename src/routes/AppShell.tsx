@@ -23,8 +23,27 @@ export default function AppShell() {
 
   useEffect(() => {
     const meta = views.find(v => loc.pathname.startsWith(v.path));
-    if (meta) document.title = `Aurora OS — ${meta.label}`;
-  }, [loc.pathname]);
+    if (meta) {
+      document.title = `Aurora OS — ${meta.label}`;
+      // SEO: update description and canonical
+      const description = `Aurora OS — ${meta.label} room for focus, voice, hypnosis, and analytics.`;
+      let md = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
+      if (!md) {
+        md = document.createElement('meta');
+        md.name = 'description';
+        document.head.appendChild(md);
+      }
+      md.content = description;
+
+      let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'canonical';
+        document.head.appendChild(link);
+      }
+      link.href = window.location.origin + loc.pathname + loc.search;
+    }
+  }, [loc.pathname, loc.search]);
   return (
     <div className={`min-h-screen room-${currentRoom}`} {...swipe}>
       <AnimatePresence mode="wait">
