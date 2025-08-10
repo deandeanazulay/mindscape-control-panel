@@ -5,12 +5,13 @@ import { quickSlots } from "@/game/hud/hud.data";
 import { EvolvingSphere } from "@/components/effects/EvolvingSphere";
 import { Mic } from "lucide-react";
 import { useViewNav } from "@/state/view";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { views } from "@/views/registry";
 
 export function GameHUD() {
   const stats = useGameStore((s) => s.stats);
   const open = useViewNav();
+  const navigate = useNavigate();
   const actionToView: Record<string, any> = {
     startFocus: 'focus',
     startHypnosis: 'hypno',
@@ -67,12 +68,11 @@ export function GameHUD() {
                     aria-label={a.label}
                     title={a.label}
                     onClick={(e) => {
-                      // Fallback route open in case a link is obstructed by overlay
+                      e.preventDefault();
                       if (!viewId) return;
                       const path = views.find((v) => v.id === viewId)?.path;
-                      if (path) {
-                        // no-op; Link will handle navigation
-                      }
+                      if (path) navigate(path);
+
                     }}
                   >
                     {a.icon ? (
