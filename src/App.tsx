@@ -10,6 +10,7 @@ import AuthPage from "./pages/Auth";
 import MindWorldDashboard from "@/components/mindworld/MindWorldDashboard";
 import BrowserShell from "@/routes/browser/BrowserShell";
 import ExtensionPage from "@/pages/Extension";
+import StackPage from "./pages/Stack";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/browser" element={<BrowserShell />} />
           <Route path="/extension" element={<ExtensionPage />} />
+          <Route path="/stack" element={<StackPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

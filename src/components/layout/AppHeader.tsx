@@ -26,6 +26,9 @@ export default function AppHeader() {
 
           {/* Right controls */}
           <nav className="flex items-center gap-2">
+            <Button asChild variant="ghost" size="sm">
+              <Link to="/stack" aria-label="View Tech Stack">Stack</Link>
+            </Button>
             <SoundControl buttonSize="icon" buttonVariant="ghost" />
             <AuthMenu />
           </nav>
