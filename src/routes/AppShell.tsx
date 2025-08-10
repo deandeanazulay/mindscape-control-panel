@@ -3,7 +3,6 @@ import { Route, Routes, useLocation, Navigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { views } from "@/views/registry";
 import { GameHUD } from "@/components/hud/GameHUD";
-import { FloatingAssistant } from "@/components/live/FloatingAssistant";
 import { bus } from "@/utils/bus";
 import { useViewNav } from "@/state/view";
 import { useXPChime } from "@/hooks/useXPChime";
@@ -73,7 +72,7 @@ export default function AppShell() {
         </Routes>
       </AnimatePresence>
 
-      <FloatingAssistant task={null} onUpdated={() => {}} />
+      
       <GameHUD />
     </div>
   );

@@ -1,5 +1,6 @@
 import { VoiceIO } from "@/voice/voiceio";
 import { ToolImpl } from "@/agent/tool-impl";
+import { supabase } from "@/integrations/supabase/client";
 
 export type AgentEvents = {
   onPartial?: (text: string) => void;
@@ -62,8 +63,23 @@ export class AuroraAgent {
       return;
     }
 
-    // fallback reply
-    this.say("Okay.");
+    try {
+      const { data, error } = await supabase.functions.invoke('aurora-chat', {
+        body: {
+          model: 'o4-mini-2025-04-16',
+          messages: [
+            { role: 'system', content: 'You are Aurora, a concise voice assistant for focus and productivity.' },
+            { role: 'user', content: text }
+          ]
+        }
+      });
+      if (error) throw error;
+      const reply = (data as any)?.content ?? 'Okay.';
+      this.say(reply);
+    } catch (e) {
+      console.error('aurora-chat failed', e);
+      this.say("Okay.");
+    }
   }
 
   say(text: string) {

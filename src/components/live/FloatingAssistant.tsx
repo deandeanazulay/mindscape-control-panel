@@ -5,6 +5,7 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/u
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { MessageSquare, Send, X, Bot, Minimize2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 type Task = {
   id: string;
@@ -37,7 +38,7 @@ export function FloatingAssistant({ task, onUpdated }: { task: Task | null; onUp
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, open]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     const text = input.trim();
     if (!text || sending) return;
     const userMsg: ChatMessage = { id: crypto.randomUUID(), role: "user", content: text };
@@ -45,16 +46,28 @@ export function FloatingAssistant({ task, onUpdated }: { task: Task | null; onUp
     setInput("");
     setSending(true);
 
-    // Stubbed assistant response for conversational feel
-    setTimeout(() => {
-      const reply: ChatMessage = {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        content: "Got it. Here are a couple of quick next steps you can take. Want me to break this into a checklist?",
-      };
+    try {
+      const history = messages.concat(userMsg).slice(-12).map(m => ({ role: m.role, content: m.content }));
+      const { data, error } = await supabase.functions.invoke('aurora-chat', {
+        body: {
+          model: 'o4-mini-2025-04-16',
+          messages: [
+            { role: 'system', content: 'You are Aurora, a concise, friendly focus coach. Reply briefly with clear steps.' },
+            ...history,
+          ],
+        },
+      });
+      if (error) throw error;
+      const replyText = (data as any)?.content ?? 'Okay.';
+      const reply: ChatMessage = { id: crypto.randomUUID(), role: 'assistant', content: replyText };
       setMessages((m) => [...m, reply]);
+    } catch (e: any) {
+      const reply: ChatMessage = { id: crypto.randomUUID(), role: 'assistant', content: 'Sorry — I had trouble reaching the assistant.' };
+      setMessages((m) => [...m, reply]);
+      console.error(e);
+    } finally {
       setSending(false);
-    }, 450);
+    }
   };
 
   useEffect(() => {

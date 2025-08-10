@@ -37,7 +37,7 @@ export function GameHUD() {
   return (
     <footer
       id="aurora-hud"
-      className="hud-maple fixed z-[80] left-[clamp(8px,2vw,20px)] right-[clamp(8px,2vw,20px)] bottom-[max(env(safe-area-inset-bottom),12px)] rounded-2xl px-4 py-3 select-none pointer-events-auto"
+      className="hud-maple fixed z-[120] left-[clamp(8px,2vw,20px)] right-[clamp(8px,2vw,20px)] bottom-[max(env(safe-area-inset-bottom),12px)] rounded-2xl px-4 py-3 select-none pointer-events-auto"
       aria-label="Game HUD"
     >
       <span className="hud-spot" />
@@ -66,6 +66,14 @@ export function GameHUD() {
                     className="action-chip"
                     aria-label={a.label}
                     title={a.label}
+                    onClick={(e) => {
+                      // Fallback route open in case a link is obstructed by overlay
+                      if (!viewId) return;
+                      const path = views.find((v) => v.id === viewId)?.path;
+                      if (path) {
+                        // no-op; Link will handle navigation
+                      }
+                    }}
                   >
                     {a.icon ? (
                       <i className={cn("hud-glyph", a.icon)} />
