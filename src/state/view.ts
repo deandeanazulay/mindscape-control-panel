@@ -10,14 +10,23 @@ type NavState = {
 
 export const useView = create<NavState>((set) => ({
   current: "control",
-  set: (v) => set({ current: v }),
+  set: (v) => {
+    console.debug('[useView] set current view', v);
+    set({ current: v });
+  },
 }));
 
 export function useViewNav() {
   const nav = useNavigate();
   return (id: ViewId, params?: Record<string, string>) => {
-    const meta = views.find((v) => v.id === id)!;
+    const meta = views.find((v) => v.id === id);
     const qs = params ? `?${new URLSearchParams(params).toString()}` : "";
-    nav(`${meta.path}${qs}`);
+    if (!meta) {
+      console.error('[useViewNav] Unknown view id', id, 'params', params);
+      return;
+    }
+    const target = `${meta.path}${qs}`;
+    console.debug('[useViewNav] navigating to', target);
+    nav(target);
   };
 }

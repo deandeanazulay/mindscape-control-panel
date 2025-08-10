@@ -5,6 +5,8 @@ import { quickSlots } from "@/game/hud/hud.data";
 import { EvolvingSphere } from "@/components/effects/EvolvingSphere";
 import { Mic } from "lucide-react";
 import { useViewNav } from "@/state/view";
+import { Link } from "react-router-dom";
+import { views } from "@/views/registry";
 
 export function GameHUD() {
   const stats = useGameStore((s) => s.stats);
@@ -55,33 +57,36 @@ export function GameHUD() {
 
           {/* Actions (scroll on small, wrap/justify on desktop) */}
           <ul className="hud-actions flex gap-2 ml-auto overflow-x-auto flex-nowrap scroll-smooth snap-x snap-mandatory md:overflow-visible md:flex-wrap md:justify-end md:ml-auto">
-            {quickSlots.map((a) => (
-              <li key={a.id} className="snap-start">
-                <button
-                  onClick={() => open(actionToView[a.action])}
-                  className="action-chip"
-                  aria-label={a.label}
-                  title={a.label}
-                >
-                  {a.icon ? (
-                    <i className={cn("hud-glyph", a.icon)} />
-                  ) : (
-                    <span className="text-sm font-medium">{a.key}</span>
-                  )}
-                  <span className="hidden sm:inline text-sm">{a.label}</span>
-                </button>
-              </li>
-            ))}
+            {quickSlots.map((a) => {
+              const viewId = actionToView[a.action];
+              return (
+                <li key={a.id} className="snap-start">
+                  <Link
+                    to={(viewId && views.find((v) => v.id === viewId)?.path) || '/app'}
+                    className="action-chip"
+                    aria-label={a.label}
+                    title={a.label}
+                  >
+                    {a.icon ? (
+                      <i className={cn("hud-glyph", a.icon)} />
+                    ) : (
+                      <span className="text-sm font-medium">{a.key}</span>
+                    )}
+                    <span className="hidden sm:inline text-sm">{a.label}</span>
+                  </Link>
+                </li>
+              );
+            })}
             <li className="snap-start">
-              <button
-                onClick={() => open('agent')}
+              <Link
+                to={views.find((v) => v.id === 'agent')?.path || '/app/agent'}
                 className="action-chip mic"
                 aria-label="Open Aurora Agent"
                 title="Aurora Agent"
               >
                 <Mic className="w-4 h-4" />
                 <span className="hidden sm:inline text-sm">Agent</span>
-              </button>
+              </Link>
             </li>
           </ul>
         </div>
